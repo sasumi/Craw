@@ -1,5 +1,5 @@
 <?php
-namespace Craw;
+namespace craw;
 spl_autoload_register(function($class){
 	if(strpos($class, __NAMESPACE__) === 0){
 		$f = substr($class, strlen(__NAMESPACE__));

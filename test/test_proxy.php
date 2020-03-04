@@ -1,7 +1,7 @@
 <?php
 
-use Craw\Logger\ScreenLogger;
-use Craw\ProxyHelper;
+use craw\Logger\ScreenLogger;
+use craw\ProxyHelper;
 require_once "../autoload.php";
 
 $max_page_size = 10;
@@ -30,7 +30,7 @@ usort($results, function($item1, $item2){
 
 /**
  * @var array $task
- * @var \Craw\CurlResult $rst
+ * @var \craw\CurlResult $rst
  */
 foreach($results as list($task, $rst)){
 	list($url, $psw) = $task;

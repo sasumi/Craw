@@ -1,16 +1,16 @@
 <?php
 
-namespace Craw;
+namespace craw;
 
-use Craw\Logger\NullLogger;
+use craw\Logger\NullLogger;
 
 abstract class Fetcher {
 	public static $logger;
 
 	/**
 	 * @param $url
-	 * @param \Craw\Policy|null $policy
-	 * @return \Craw\CurlResult
+	 * @param \craw\Policy|null $policy
+	 * @return \craw\CurlResult
 	 */
 	public static function getContent($url, Policy $policy = null){
 		$policy = $policy ?: new Policy();
@@ -39,7 +39,7 @@ abstract class Fetcher {
 	/**
 	 * 并发获取内容
 	 * @param $urls
-	 * @param \Craw\Policy|null $policy
+	 * @param \craw\Policy|null $policy
 	 * @param callable|null $on_item_finish
 	 * @param int $item_timeout
 	 * @param int $rolling_count

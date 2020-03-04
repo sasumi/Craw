@@ -1,7 +1,7 @@
 <?php
 
-use Craw\Fetcher;
-use Craw\Logger\ScreenLogger;
+use craw\Fetcher;
+use craw\Logger\ScreenLogger;
 
 require_once "../autoload.php";
 

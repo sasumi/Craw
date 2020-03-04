@@ -6,8 +6,8 @@
 
 ```php
 <?php    
-use Craw\Fetcher;
-use Craw\Logger\ScreenLogger;
+use craw\Fetcher;
+use craw\Logger\ScreenLogger;
 
 //引入类库自动加载文件
 include 'Craw/autoload.php';

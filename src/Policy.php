@@ -1,5 +1,5 @@
 <?php
-namespace Craw;
+namespace craw;
 
 /**
  * 请求策略

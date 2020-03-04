@@ -1,6 +1,6 @@
 <?php
 
-namespace Craw\Logger;
+namespace craw\Logger;
 
 abstract class LoggerAbstract {
 	const DEBUG = 'DEBUG';

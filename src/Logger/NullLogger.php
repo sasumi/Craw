@@ -1,8 +1,8 @@
 <?php
 
-namespace Craw\Logger;
+namespace craw\Logger;
 
-use Craw\Logger\LoggerAbstract;
+use craw\Logger\LoggerAbstract;
 
 class NullLogger extends LoggerAbstract {
 	protected function doLog($msg, $level){}

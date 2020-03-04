@@ -1,6 +1,6 @@
 <?php
 
-namespace Craw;
+namespace craw;
 
 class CurlResult {
 	public $url;

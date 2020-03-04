@@ -1,9 +1,9 @@
 <?php
-namespace Craw;
+namespace craw;
 
-use Craw\Logger\LoggerAbstract;
-use Craw\Logger\NullLogger;
-use Craw\Logger\ScreenLogger;
+use craw\Logger\LoggerAbstract;
+use craw\Logger\NullLogger;
+use craw\Logger\ScreenLogger;
 
 class ProxyHelper {
 	private $proxies = [];
@@ -34,8 +34,8 @@ class ProxyHelper {
 	private function __clone(){}
 
 	/**
-	 * @param \Craw\Logger\LoggerAbstract|null $logger
-	 * @return \Craw\ProxyHelper
+	 * @param \craw\Logger\LoggerAbstract|null $logger
+	 * @return \craw\ProxyHelper
 	 */
 	public static function instance(LoggerAbstract $logger = null){
 		static $instance;
@@ -50,7 +50,7 @@ class ProxyHelper {
 	 * 添加代理
 	 * @param string $addr 代理地址
 	 * @param string $psw 密码
-	 * @return \Craw\ProxyHelper
+	 * @return \craw\ProxyHelper
 	 */
 	public function addProxy($addr, $psw = ''){
 		$this->proxies[] = [$addr, $psw];
@@ -147,7 +147,7 @@ class ProxyHelper {
 	 * </pre>
 	 * @param string $psw 密码
 	 * @param int $timeout
-	 * @return \Craw\CurlResult
+	 * @return \craw\CurlResult
 	 */
 	public function test($addr, $psw = '', $timeout = 5){
 		$ch = \curl_init();
