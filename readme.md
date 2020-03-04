@@ -10,7 +10,7 @@ use craw\Fetcher;
 use craw\Logger\ScreenLogger;
 
 //引入类库自动加载文件
-include 'Craw/autoload.php';
+include 'craw/autoload.php';
 
 //获取内容
 $result = Fetcher::getContent('http://www.baidu.com');
