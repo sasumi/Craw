@@ -59,13 +59,13 @@ socks4://192.168.1.1:8888
 
 ```php
 <?php
-use ProxyTest\ProxyTest;
+use craw\ProxyHelper;
 
-include 'autoload.php';
-$results = ProxyTest::instance()->addProxy('192.168.0.1:80')->testConcurrent();
+include 'craw/autoload.php';
+$results = ProxyHelper::instance()->addProxy('192.168.0.1:80')->testConcurrent();
 var_dump($results);
 
-$result = ProxyTest::test('socks5://192.168.1.1:1080');
+$result = ProxyHelper::instance()->test('socks5://192.168.1.1:1080');
 echo $result;
 
 ```
