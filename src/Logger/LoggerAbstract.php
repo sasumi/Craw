@@ -1,6 +1,8 @@
 <?php
 
-namespace craw\Logger;
+namespace Craw\Logger;
+
+use function Craw\var_export_min;
 
 abstract class LoggerAbstract {
 	const DEBUG = 'DEBUG';
@@ -9,51 +11,62 @@ abstract class LoggerAbstract {
 	const WARN = 'WARN';
 	const ERROR = 'ERROR';
 
-	/**
-	 * @param $msg
-	 * @param string $level
-	 * @return mixed
-	 */
-	abstract protected function doLog($msg, $level);
+	public function __invoke(...$messages){
+		return call_user_func_array([$this, 'log'], $messages);
+	}
 
-	/**
-	 * @param $msg
-	 * @return mixed|null
-	 */
-	public function debug($msg){
-		return $this->doLog($msg, self::DEBUG);
+	protected static function combineMessages($messages){
+		foreach($messages as $k=>$msg){
+			$messages[$k] = is_scalar($msg) ? $msg : var_export_min($msg, true);
+		}
+		return join(' ',$messages);
 	}
 
 	/**
-	 * @param $msg
+	 * @param array $messages
+	 * @param string $level
+	 * @return mixed
+	 */
+	abstract protected function doLog($messages, $level);
+
+	/**
+	 * @param array $messages
 	 * @return mixed|null
 	 */
-	public function info($msg){
-		return $this->doLog($msg, self::INFO);
+	public function debug(...$messages){
+		return $this->doLog($messages, self::DEBUG);
+	}
+
+	/**
+	 * @param array $messages
+	 * @return mixed|null
+	 */
+	public function info(...$messages){
+		return $this->doLog($messages, self::INFO);
 	}
 
 	/**
 	 * log输出
-	 * @param $msg
+	 * @param array $messages
 	 * @return mixed|null
 	 */
-	public function log($msg){
-		return $this->doLog($msg, self::LOG);
+	public function log(...$messages){
+		return $this->doLog($messages, self::LOG);
 	}
 
 	/**
-	 * @param $msg
+	 * @param array $messages
 	 * @return mixed|null
 	 */
-	public function warn($msg){
-		return $this->doLog($msg, self::WARN);
+	public function warn(...$messages){
+		return $this->doLog($messages, self::WARN);
 	}
 
 	/**
-	 * @param $msg
+	 * @param array $messages
 	 * @return mixed|null
 	 */
-	public function error($msg){
-		return $this->doLog($msg, self::ERROR);
+	public function error(...$messages){
+		return $this->doLog($messages, self::ERROR);
 	}
 }

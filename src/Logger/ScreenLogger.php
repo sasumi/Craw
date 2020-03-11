@@ -1,11 +1,9 @@
 <?php
 
-namespace craw\Logger;
-
-use craw\Logger\LoggerAbstract;
+namespace Craw\Logger;
 
 class ScreenLogger extends LoggerAbstract {
-	protected function doLog($msg, $level){
-		echo "[$level] ", $msg, PHP_EOL;
+	protected function doLog($messages, $level){
+		echo "[$level] ", self::combineMessages($messages), PHP_EOL;
 	}
 }
