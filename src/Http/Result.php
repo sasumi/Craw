@@ -90,9 +90,9 @@ class Result {
 	 */
 	public function getResultMessage(){
 		if($this->isSuccess()){
-			return 'success, content length:'.strlen($this->body);
+			return 'SUCCESS, content length:'.strlen($this->body).', time cost: '.$this->total_time.'sec';
 		}else{
-			return 'http code error('.$this->http_code.').';
+			return 'ERROR, http code:'.$this->http_code.', time cost: '.$this->total_time.'sec';
 		}
 	}
 
@@ -103,18 +103,21 @@ class Result {
 	/**
 	 * 以JSON格式解码
 	 * @param bool $as_assoc_array
-	 * @return array|mixed
+	 * @return array|object|null
 	 */
 	public function decodeAsJSON($as_assoc_array = false){
-		return $this->body ? json_decode($this->body, $as_assoc_array) : [];
+		return $this->body ? json_decode($this->body, $as_assoc_array) : null;
 	}
 
 	/**
 	 * 以JSONP格式解码
 	 * @param bool $as_assoc_array
-	 * @return mixed
+	 * @return array|object|null
 	 */
 	public function decodeAsJSONP($as_assoc_array = false){
+		if(!$this->body){
+			return null;
+		}
 		$str = $this->body;
 		if($str[0] !== '[' && $str[0] !== '{'){
 			$str = substr($str, strpos($str, '('));

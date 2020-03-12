@@ -4,6 +4,6 @@ namespace Craw\Logger;
 
 class ScreenLogger extends LoggerAbstract {
 	protected function doLog($messages, $level){
-		echo "[$level] ", self::combineMessages($messages), PHP_EOL;
+		echo date('H:i:s m/d '),self::combineMessages($messages), PHP_EOL;
 	}
 }

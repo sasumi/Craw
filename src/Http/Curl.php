@@ -93,7 +93,7 @@ abstract class Curl {
 		$result = new Result($url, $content, $ch);
 		curl_close($ch);
 
-		$logger('Fetch Done, content size:', strlen($content));
+		$logger($result->getResultMessage());
 		return $result;
 	}
 
@@ -115,6 +115,7 @@ abstract class Curl {
 		$common_option = self::mergeCurlOptions([
 			CURLOPT_RETURNTRANSFER => true, //返回内容部分
 			CURLOPT_HEADER         => true,
+			CURLOPT_ENCODING       => 'gzip',
 			CURLOPT_TIMEOUT        => self::$default_timeout,
 		], $extra_common_curl_option);
 
