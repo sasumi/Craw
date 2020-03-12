@@ -28,13 +28,16 @@ class Result {
 	/** @var Context */
 	public $context;
 
+	/** @var Page */
+	private $page;
+
 	/**
 	 * @param string $url
 	 * @param string $raw_string
 	 * @param resource $ch
 	 * @param Context|null $context
 	 */
-	public function __construct($url, $raw_string, $ch, $context=null){
+	public function __construct($url, $raw_string, $ch, $context = null){
 		$this->url = $url;
 		$curl_info = curl_getinfo($ch);
 		$this->total_time = round($curl_info['total_time_us']/1000000, 6);
@@ -124,6 +127,9 @@ class Result {
 	 * @return Page
 	 */
 	public function decodeAsPage(){
-		return new Page($this->body);
+		if(!$this->page){
+			$this->page = new Page($this->body);
+		}
+		return $this->page;
 	}
 }

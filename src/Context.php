@@ -27,7 +27,7 @@ class Context {
 	public $user_agent;
 
 	/** @var Cookie[] */
-	public $cookies;
+	public $cookies = [];
 
 	/** @var string language */
 	public $lang;
@@ -230,7 +230,7 @@ class Context {
 	 * @param array $page_offset
 	 * @param array $option
 	 * @param array $extra_curl_option 其他CURL控制参数
-	 * @return array
+	 * @return Result[]
 	 */
 	public function getList($list_url, $page_offset = [], $option = [], $extra_curl_option = []){
 		$rolling_count = $option['rolling_count'];
@@ -240,7 +240,6 @@ class Context {
 
 		$all_results = [];
 		$curl_option = Curl::mergeCurlOptions($this->getCurlOption(), $extra_curl_option);
-		dump($this->cookies, 1);
 
 		foreach(range_slice($start, $end, $rolling_count) as list($item_start, $item_end)){
 			$task_list = [];
@@ -268,7 +267,7 @@ class Context {
 					return $all_results;
 				}
 			}else{
-				$all_results += $results;
+				$all_results = array_merge($all_results, $results);
 			}
 		}
 		return $all_results;
@@ -303,8 +302,8 @@ class Context {
 		if(!$this->auth_always_on_set){
 			$this->auth = null;
 		}
-		if($this->auto_update_cookie){
-			$this->setCookies($result->cookies);
+		if($this->auto_update_cookie && $result->cookies){
+			$this->cookies = Cookie::updateLocalCookies($this->cookies, $result->cookies);
 		}
 		if($this->auto_update_referer){
 			$this->extra_http_headers['Referer'] = $this->auto_update_referer ? $result->url : null;
@@ -332,7 +331,10 @@ class Context {
 		}
 
 		if($this->cookies){
-			$options[CURLOPT_HTTPHEADER]['Cookie'] = join('; ', $this->cookies);
+			$cookies = Cookie::cleanExpiredCookies($this->cookies);
+			if($cookies){
+				$options[CURLOPT_HTTPHEADER]['Cookie'] = join('; ', $cookies);
+			}
 		}
 
 		if($this->max_redirect){
