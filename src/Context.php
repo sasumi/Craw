@@ -49,7 +49,6 @@ class Context {
 			'Upgrade-Insecure-Requests' => '1',
 			'Accept'                    => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
 			'Accept-Encoding'           => 'gzip, deflate',
-			'Referer'                   => null,
 		];
 	}
 
@@ -58,6 +57,7 @@ class Context {
 	}
 
 	/**
+	 * 暂停随机时间
 	 * @param int $min
 	 * @param int $max
 	 * @return $this
@@ -67,6 +67,7 @@ class Context {
 	}
 
 	/**
+	 * 暂停
 	 * @param $sec
 	 * @return $this
 	 */
@@ -88,6 +89,7 @@ class Context {
 	}
 
 	/**
+	 * 设定代理
 	 * @param Proxy $proxy
 	 * @param bool $always_on_set 是否全程保持使用
 	 * @return $this
@@ -99,6 +101,7 @@ class Context {
 	}
 
 	/**
+	 * 设定UA
 	 * @param string $user_agent
 	 * @return \Craw\Context
 	 */
@@ -108,6 +111,7 @@ class Context {
 	}
 
 	/**
+	 * 设定cookie
 	 * @param Cookie[] $cookies
 	 * @return $this
 	 */
@@ -117,7 +121,7 @@ class Context {
 	}
 
 	/**
-	 * set language
+	 * 设定语言
 	 * @param string $lang
 	 * @return $this
 	 */
@@ -221,7 +225,57 @@ class Context {
 	}
 
 	/**
-	 * post request
+	 * 并发获取列表信息
+	 * @param string|callable $list_url 列表地址，使用 %i%占位符表示页码，或使用函数动态获取（传入参数为：当前页码）
+	 * @param array $page_offset
+	 * @param array $option
+	 * @param array $extra_curl_option 其他CURL控制参数
+	 * @return array
+	 */
+	public function getList($list_url, $page_offset = [], $option = [], $extra_curl_option = []){
+		$rolling_count = $option['rolling_count'];
+		$break_on_error = $option['break_on_error'];
+		$batch_interval_time = $option['batch_interval_time'];
+		list($start, $end) = $page_offset;
+
+		$all_results = [];
+		$curl_option = Curl::mergeCurlOptions($this->getCurlOption(), $extra_curl_option);
+		dump($this->cookies, 1);
+
+		foreach(range_slice($start, $end, $rolling_count) as list($item_start, $item_end)){
+			$task_list = [];
+			while($item_start++ < $item_end){
+				if(is_callable($list_url)){
+					$task_list[] = $list_url($item_end);
+				}else{
+					$task_list[] = str_replace('%i%', $item_start, $list_url);
+				}
+			}
+			$results = Curl::getContents($task_list, [
+				'rolling_count'       => $rolling_count,
+				'batch_interval_time' => $batch_interval_time,
+			], $curl_option);
+			if($break_on_error){
+				$on_error = false;
+				array_filter($results, function(Result $result) use (&$on_error){
+					if(!$result->isSuccess()){
+						$on_error = true;
+					}else{
+						$all_results[] = $result;
+					}
+				});
+				if($on_error){
+					return $all_results;
+				}
+			}else{
+				$all_results += $results;
+			}
+		}
+		return $all_results;
+	}
+
+	/**
+	 * post请求
 	 * @param callable|string $url 请求URL，可使用闭包函数动态返回url，传入参数为（上次请求结果last_result, 上下文环境context)
 	 * @param null $param
 	 * @param array $extra_curl_option
@@ -239,6 +293,7 @@ class Context {
 	}
 
 	/**
+	 * 请求后处理逻辑
 	 * @param Result $result
 	 */
 	protected function afterRequest(Result $result){
@@ -259,6 +314,7 @@ class Context {
 	}
 
 	/**
+	 * 获取当前上下文CURL选项
 	 * @return array
 	 */
 	public function getCurlOption(){
@@ -289,7 +345,7 @@ class Context {
 		}
 
 		if($this->user_agent){
-			$option[CURLOPT_HTTPHEADER]['User-Agent'] = $this->user_agent;
+			$options[CURLOPT_HTTPHEADER]['User-Agent'] = $this->user_agent;
 		}
 
 		if($this->lang){
@@ -304,6 +360,7 @@ class Context {
 			}
 			$options[CURLOPT_HTTPHEADER] = $headers;
 		}
+
 		if($this->timeout){
 			$options[CURLOPT_TIMEOUT] = $this->timeout;
 			$options[CURLOPT_CONNECTTIMEOUT] = $this->timeout;

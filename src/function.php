@@ -14,6 +14,20 @@ function is_assoc($arr){
 }
 
 /**
+ * 划分范围
+ * @param $start
+ * @param $end
+ * @param $size
+ * @return \Generator
+ */
+function range_slice($start, $end, $size){
+	$page_count = ceil(($end - $start)/$size);
+	for($i=0; $i<$page_count; $i++){
+		yield [$start+$i*$size, min($start+($i+1)*$size, $end)];
+	}
+}
+
+/**
  * convert data to request string
  * @param $data
  * @return string

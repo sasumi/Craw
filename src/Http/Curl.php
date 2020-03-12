@@ -4,6 +4,8 @@ namespace Craw\Http;
 
 use Craw\Logger\NullLogger;
 use function Craw\data_to_string;
+use function Craw\dump;
+use const http\Client\Curl\Versions\CURL;
 
 abstract class Curl {
 	public static $default_timeout = 10;
@@ -44,7 +46,6 @@ abstract class Curl {
 	 */
 	public static function request($url, $data = null, $request_method = self::REQUEST_METHOD_GET, $extra_curl_option = null){
 		$logger = self::$logger ?: new NullLogger();
-
 		$curl_option = [
 			CURLOPT_RETURNTRANSFER => true, //返回内容部分
 			CURLOPT_TIMEOUT        => self::$default_timeout,
@@ -113,7 +114,7 @@ abstract class Curl {
 		//公用CURL选项
 		$common_option = self::mergeCurlOptions([
 			CURLOPT_RETURNTRANSFER => true, //返回内容部分
-			CURLOPT_HTTPHEADER     => true,
+			CURLOPT_HEADER         => true,
 			CURLOPT_TIMEOUT        => self::$default_timeout,
 		], $extra_common_curl_option);
 

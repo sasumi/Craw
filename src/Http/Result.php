@@ -3,6 +3,7 @@
 namespace Craw\Http;
 
 use Craw\Context;
+use Craw\Html\Page;
 use function Craw\dump;
 
 class Result {
@@ -18,13 +19,13 @@ class Result {
 	/** @var string|null */
 	public $body;
 
-	/** @var \Craw\Http\Cookie[] */
+	/** @var Cookie[] */
 	public $cookies;
 
 	/** @var float */
 	public $total_time;
 
-	/** @var \Craw\Context */
+	/** @var Context */
 	public $context;
 
 	/**
@@ -107,8 +108,22 @@ class Result {
 
 	/**
 	 * 以JSONP格式解码
+	 * @param bool $as_assoc_array
+	 * @return mixed
 	 */
-	public function decodeAsJSONP(){
+	public function decodeAsJSONP($as_assoc_array = false){
+		$str = $this->body;
+		if($str[0] !== '[' && $str[0] !== '{'){
+			$str = substr($str, strpos($str, '('));
+		}
+		return json_decode(trim($str, '();'), $as_assoc_array);
+	}
 
+	/**
+	 * 返回Page对象
+	 * @return Page
+	 */
+	public function decodeAsPage(){
+		return new Page($this->body);
 	}
 }

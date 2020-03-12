@@ -1,7 +1,5 @@
 <?php
-namespace Craw;
-
-use DOMDocument;
+namespace Craw\Html;
 
 class Page extends Parser {
 	public function title(){
@@ -10,9 +8,5 @@ class Page extends Parser {
 
 	public function body(){
 		return $this->query('body');
-	}
-
-	public function plainText(){
-
 	}
 }

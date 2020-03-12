@@ -1,5 +1,5 @@
 <?php
-namespace Craw;
+namespace Craw\Html;
 
 use DOMDocument;
 
