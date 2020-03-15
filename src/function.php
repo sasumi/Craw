@@ -22,8 +22,8 @@ function is_assoc($arr){
  */
 function range_slice($start, $end, $size){
 	$page_count = ceil(($end - $start)/$size);
-	for($i=0; $i<$page_count; $i++){
-		yield [$start+$i*$size, min($start+($i+1)*$size, $end)];
+	for($i = 0; $i < $page_count; $i++){
+		yield [$start + $i*$size, min($start + ($i + 1)*$size, $end)];
 	}
 }
 
@@ -115,6 +115,58 @@ function print_trace($trace, $with_callee = false, $with_index = false){
 	}
 }
 
+/**
+ * 检测数组是否为关联数组
+ * @param array $array
+ * @return boolean
+ */
+function is_assoc_array($array){
+	return is_array($array) && array_values($array) != $array;
+}
+
+
+/**
+ * 清理数组中empty的元素
+ * @param $data
+ * @param bool $recursive
+ * @return array
+ */
+function array_clear_empty($data, $recursive = true){
+	if(empty($data) || !is_array($data)){
+		return $data;
+	}
+	foreach($data as $k => $item){
+		if(empty($item)){
+			unset($data[$k]);
+		}
+		if($recursive && is_array($item)){
+			$data[$k] = array_clear_empty($item);
+			if(empty($data[$k])){
+				unset($data[$k]);
+			}
+		}
+	}
+	return $data;
+}
+
+/**
+ * preg match one
+ * @param $regex
+ * @param $str
+ * @param bool $throw_exception
+ * @return string|null
+ * @throws \Exception
+ */
+function preg_match_one($regex, $str, $throw_exception = true){
+	$hit = preg_match($regex, $str, $matches);
+	if(!$hit && $throw_exception){
+		throw new \Exception("No match regexp: $regex, for string:$str");
+	}
+	if($hit){
+		return trim($matches[1]);
+	}
+	return null;
+}
 
 /**
  * var_export in minimal format

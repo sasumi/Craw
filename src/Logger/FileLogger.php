@@ -1,6 +1,8 @@
 <?php
 
 namespace Craw\Logger;
+use function Craw\dump;
+
 class FileLogger extends LoggerAbstract {
 	private $file;
 	private $file_fp;
@@ -27,6 +29,7 @@ class FileLogger extends LoggerAbstract {
 	protected function doLog($messages, $level){
 		$str = str_replace(['{level}', '{message}'], [$level, self::combineMessages($messages)], $this->format);
 		$str = preg_replace_callback('/(%\w)/', function($date_format){
+			dump($date_format, 1);
 			return date($date_format);
 		}, $str);
 		if(!$this->file_fp){

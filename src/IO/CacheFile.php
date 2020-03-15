@@ -1,8 +1,8 @@
 <?php
 
-namespace Craw;
+namespace Craw\IO;
 
-class Cache {
+class CacheFile {
 	private $cache_dir;
 	private $cache_in_process = true;
 	private static $process_cache = [];
@@ -19,7 +19,7 @@ class Cache {
 
 	/**
 	 * @param $cache_dir
-	 * @return \Craw\Cache
+	 * @return self
 	 */
 	public static function instance($cache_dir){
 		return new self($cache_dir);
@@ -27,7 +27,7 @@ class Cache {
 
 	/**
 	 * cache in system temporary directory
-	 * @return \Craw\Cache
+	 * @return self
 	 */
 	public static function inTemp(){
 		return new self(sys_get_temp_dir().'/'.self::$temp_fold_name);

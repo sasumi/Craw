@@ -7,6 +7,7 @@ use Craw\Http\Curl;
 use Craw\Http\HttpAuth;
 use Craw\Http\Proxy;
 use Craw\Http\Result;
+use Craw\IO\CacheFile;
 use Craw\Logger\LoggerAbstract;
 
 class Context {
@@ -217,7 +218,7 @@ class Context {
 		if(is_callable($url)){
 			$url = call_user_func($url, $this->last_result, $this);
 		}
-		$result = Cache::inTemp()->cache([$url, $param], function() use ($url, $param, $extra_curl_option){
+		$result = CacheFile::inTemp()->cache([$url, $param], function() use ($url, $param, $extra_curl_option){
 			return Curl::getContent($url, $param, Curl::mergeCurlOptions($this->getCurlOption(), $extra_curl_option));
 		}, $this->cache_time);
 		$this->afterRequest($result);
@@ -284,7 +285,7 @@ class Context {
 		if(is_callable($url)){
 			$url = call_user_func($url, $this->last_result, $this);
 		}
-		$result = Cache::inTemp()->cache([$url, $param], function() use ($url, $param, $extra_curl_option){
+		$result = CacheFile::inTemp()->cache([$url, $param], function() use ($url, $param, $extra_curl_option){
 			return Curl::postContent($url, $param, Curl::mergeCurlOptions($this->getCurlOption(), $extra_curl_option));
 		}, $this->cache_time);
 		$this->afterRequest($result);
