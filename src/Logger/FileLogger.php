@@ -13,7 +13,7 @@ class FileLogger extends LoggerAbstract {
 		if(is_callable($log_file)){
 			$log_file = call_user_func($log_file);
 		}
-		$dir = dir($log_file);
+		$dir = dirname($log_file);
 		if(!is_dir($dir)){
 			mkdir($dir, 0777, true);
 		}
@@ -28,9 +28,8 @@ class FileLogger extends LoggerAbstract {
 	 */
 	protected function doLog($messages, $level){
 		$str = str_replace(['{level}', '{message}'], [$level, self::combineMessages($messages)], $this->format);
-		$str = preg_replace_callback('/(%\w)/', function($date_format){
-			dump($date_format, 1);
-			return date($date_format);
+		$str = preg_replace_callback('/(%\w)/', function($matches){
+			return date(str_replace('%', '', $matches[1]));
 		}, $str);
 		if(!$this->file_fp){
 			$this->file_fp = fopen($this->file, 'a');

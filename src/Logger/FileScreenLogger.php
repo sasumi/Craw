@@ -1,6 +1,8 @@
 <?php
 
 namespace Craw\Logger;
+use function Craw\dump;
+
 class FileScreenLogger extends FileLogger {
 	/**
 	 * do log
@@ -9,7 +11,8 @@ class FileScreenLogger extends FileLogger {
 	 * @return mixed|void
 	 */
 	protected function doLog($messages, $level){
-		echo date('H:i:s m/d '),self::combineMessages($messages), PHP_EOL;
-		return parent::doLog($messages, $level);
+		$text = self::combineMessages($messages).PHP_EOL;
+		echo $text;
+		return parent::doLog([$text], $level);
 	}
 }

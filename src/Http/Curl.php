@@ -85,7 +85,7 @@ abstract class Curl {
 		}
 
 		$curl_option = self::mergeCurlOptions($curl_option, $extra_curl_option);
-		$logger("Start Fetching $url ...");
+		$logger("> Start Fetching $url ...");
 
 		\curl_setopt_array($ch, $curl_option);
 
@@ -93,7 +93,7 @@ abstract class Curl {
 		$result = new Result($url, $content, $ch);
 		curl_close($ch);
 
-		$logger($result->getResultMessage());
+		$logger('  '.$result->getResultMessage());
 		return $result;
 	}
 

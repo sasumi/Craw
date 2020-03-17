@@ -2,6 +2,9 @@
 
 namespace Craw;
 
+use DateTime;
+use DateTimeZone;
+
 /**
  * check array is an assoc array
  * @param $arr
@@ -25,6 +28,17 @@ function range_slice($start, $end, $size){
 	for($i = 0; $i < $page_count; $i++){
 		yield [$start + $i*$size, min($start + ($i + 1)*$size, $end)];
 	}
+}
+
+/**
+ * @param $timezone_title
+ * @return float|int
+ * @throws \Exception
+ */
+function get_timezone_offset_min_between_gmt($timezone_title) {
+	$dtz = new DateTimeZone($timezone_title);
+	$dt = new DateTime("now", $dtz);
+	return $dtz->getOffset($dt)/60;
 }
 
 /**
