@@ -8,13 +8,9 @@ use Craw\Http\HttpAuth;
 use Craw\Http\Proxy;
 use Craw\Http\Result;
 use Craw\IO\CacheFile;
-use Craw\Logger\LoggerAbstract;
 
 class Context {
 	public $timeout = 10;
-
-	/** @var LoggerAbstract|null */
-	public $logger;
 
 	/** @var int cache time in seconds */
 	public $cache_time = 0;
@@ -138,17 +134,6 @@ class Context {
 	 */
 	public function setTimeout($timeout){
 		$this->timeout = $timeout;
-		return $this;
-	}
-
-	/**
-	 * 绑定日志处理
-	 * @param LoggerAbstract $logger
-	 * @return \Craw\Context
-	 */
-	public function setLogger($logger){
-		Curl::$logger = $logger;
-		$this->logger = $logger;
 		return $this;
 	}
 

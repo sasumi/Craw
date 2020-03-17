@@ -1,14 +1,14 @@
 <?php
 
 use Craw\Http\Curl;
-use Craw\Logger\ScreenLogger;
+use Craw\Logger\ConsoleLogger;
+use Craw\Logger\FileLogger;
+use Craw\Logger\Logger;
 
 require_once "../autoload.php";
 
 $url = 'http://www.baidu.com';
-echo "Fetching $url", PHP_EOL;
+Logger::register(FileLogger::instance(null, __DIR__.'/craw.log'), Logger::DEBUG);
+Logger::register(ConsoleLogger::instance(), Logger::VERBOSE);
 
-Curl::$logger = new ScreenLogger();
 $result = Curl::getContent($url);
-echo $result->getResultMessage(),PHP_EOL;
-echo "Content got, content size:", strlen($result);

@@ -4,7 +4,7 @@ namespace Craw\Http;
 
 use Craw\Context;
 use Craw\Html\Page;
-use function Craw\dump;
+use Craw\Logger\Logger;
 
 class Result {
 	/** @var string */
@@ -40,6 +40,9 @@ class Result {
 	public function __construct($url, $raw_string, $ch, $context = null){
 		$this->url = $url;
 		$curl_info = curl_getinfo($ch);
+
+		Logger::instance(__CLASS__)->debug('Result curl info:', $curl_info);
+
 		$this->total_time = round($curl_info['total_time_us']/1000000, 6);
 		$this->http_code = $curl_info['http_code'];
 		$header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
@@ -90,7 +93,7 @@ class Result {
 	 */
 	public function getResultMessage(){
 		if($this->isSuccess()){
-			return 'SUCCESS, content length:'.strlen($this->body).', time cost: '.$this->total_time.'sec';
+			return 'SUCCESS, content length:'.strlen($this->body).' bytes, time cost: '.$this->total_time.' sec';
 		}else{
 			return 'ERROR, http code:'.$this->http_code.', time cost: '.$this->total_time.'sec';
 		}

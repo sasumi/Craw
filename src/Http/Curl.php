@@ -2,14 +2,13 @@
 
 namespace Craw\Http;
 
-use Craw\Logger\NullLogger;
+use Craw\Logger\Logger;
 use function Craw\data_to_string;
 use function Craw\dump;
-use const http\Client\Curl\Versions\CURL;
+use function Craw\var_export_min;
 
 abstract class Curl {
 	public static $default_timeout = 10;
-	public static $logger;
 
 	const REQUEST_METHOD_GET = 'GET';
 	const REQUEST_METHOD_POST = 'POST';
@@ -45,7 +44,7 @@ abstract class Curl {
 	 * @return \Craw\Http\Result
 	 */
 	public static function request($url, $data = null, $request_method = self::REQUEST_METHOD_GET, $extra_curl_option = null){
-		$logger = self::$logger ?: new NullLogger();
+		$logger = Logger::instance(__CLASS__);
 		$curl_option = [
 			CURLOPT_RETURNTRANSFER => true, //返回内容部分
 			CURLOPT_TIMEOUT        => self::$default_timeout,
@@ -87,6 +86,8 @@ abstract class Curl {
 		$curl_option = self::mergeCurlOptions($curl_option, $extra_curl_option);
 		$logger("> Start Fetching $url ...");
 
+		$logger->debug('CURL Options:', self::printCurlOption($curl_option, true));
+
 		\curl_setopt_array($ch, $curl_option);
 
 		$content = \curl_exec($ch);
@@ -106,7 +107,7 @@ abstract class Curl {
 	 * @throws \Exception
 	 */
 	public static function getContents($urls, $control_option = [], $extra_common_curl_option = []){
-		$logger = self::$logger ?: new NullLogger();
+		$logger = Logger::instance(__CLASS__);
 		$rolling_count = $control_option['rolling_count'] ?: 10;
 		$on_item_finish = $control_option['on_item_finish'];
 		$batch_interval_time = $control_option['batch_interval_time']; //每批请求之间间隔时间
@@ -196,9 +197,10 @@ abstract class Curl {
 	/**
 	 * 打印CURL选项
 	 * @param $options
+	 * @param bool $as_return
 	 * @return array
 	 */
-	public static function getCurlOptionPrints($options){
+	public static function printCurlOption($options, $as_return = false){
 		static $all_const_list;
 		if(!$all_const_list){
 			$all_const_list = get_defined_constants();
@@ -209,6 +211,10 @@ abstract class Curl {
 				$prints[$text] = $options[$v];
 			}
 		}
-		return $prints;
+		if(!$as_return){
+			var_export_min($prints);
+		}else{
+			return $prints;
+		}
 	}
 }
