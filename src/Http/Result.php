@@ -41,7 +41,7 @@ class Result {
 		$this->url = $url;
 		$curl_info = curl_getinfo($ch);
 
-		Logger::instance(__CLASS__)->debug('Result curl info:', $curl_info);
+		Logger::instance(__CLASS__)->info('Result curl info:', $curl_info);
 
 		$this->total_time = round($curl_info['total_time_us']/1000000, 6);
 		$this->http_code = $curl_info['http_code'];

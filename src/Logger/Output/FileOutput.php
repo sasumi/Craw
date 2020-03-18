@@ -1,30 +1,27 @@
 <?php
 
-namespace Craw\Logger;
+namespace Craw\Logger\Output;
 
-use function Craw\dump;
+use Craw\Logger\Logger;
 
-class FileLogger extends Logger {
+class FileOutput extends CommonAbstract {
 	private $file;
 	private $file_fp;
-	public $format = '%H:%i:%s %m/%d [{level}] {message}';
+	private $format = '%H:%i:%s %m/%d {id} - {level} - {message}';
 
 	/**
-	 * @param string $id
 	 * @param null $log_file
 	 * @return \Craw\Logger\Logger|void
 	 */
-	public static function instance($id = '', $log_file = null){
-		$instance = parent::instance($id);
+	public function __construct($log_file = null){
 		$log_file = $log_file ?: sys_get_temp_dir().'/craw_logger.'.date('Ymd').'.log';
-		$instance->setFile($log_file);
-		return $instance;
+		$this->setFile($log_file);
 	}
 
 	/**
 	 * set log file
 	 * @param string $log_file log file path
-	 * @return \Craw\Logger\FileLogger
+	 * @return \Craw\Logger\Output\FileOutput
 	 */
 	public function setFile($log_file){
 		if(is_callable($log_file)){
@@ -51,10 +48,15 @@ class FileLogger extends Logger {
 	 * do log
 	 * @param $messages
 	 * @param string $level
+	 * @param null $logger_id
 	 * @return mixed|void
 	 */
-	protected function doLog($messages, $level){
-		$str = str_replace(['{level}', '{message}'], [self::LEVEL_TEXT_MAP[$level], self::combineMessages($messages)], $this->format);
+	public function output($messages, $level, $logger_id = null){
+		$str = str_replace(['{id}', '{level}', '{message}'], [
+			$logger_id,
+			Logger::LEVEL_TEXT_MAP[$level],
+			Logger::combineMessages($messages),
+		], $this->format);
 		$str = preg_replace_callback('/(%\w)/', function($matches){
 			return date(str_replace('%', '', $matches[1]));
 		}, $str);

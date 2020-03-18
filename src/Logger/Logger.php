@@ -2,41 +2,42 @@
 
 namespace Craw\Logger;
 
-use function Craw\dump;
 use function Craw\var_export_min;
 
 class Logger {
-	const VERBOSE = 0;
-	const DEBUG = 1;
-	const INFO = 2;
-	const LOG = 3;
-	const WARN = 4;
-	const ERROR = 5;
+	const VERBOSE = 0; //冗余信息
+	const INFO = 1; //普通信息
+	const LOG = 2; //重要日志信息
+	const WARN = 3; //告警
+	const ERROR = 4; //错误
 
 	const LEVEL_TEXT_MAP = [
-		self::DEBUG => 'DEBUG',
-		self::INFO  => 'INFO',
-		self::LOG   => 'LOG',
-		self::WARN  => 'WARN',
-		self::ERROR => 'ERROR',
+		self::VERBOSE => 'VERBOSE',
+		self::INFO    => 'INFO',
+		self::LOG     => 'LOG',
+		self::WARN    => 'WARN',
+		self::ERROR   => 'ERROR',
 	];
 
 	const DEFAULT_ID = 'default';
 
-	protected static $handlers = [];
+	/**
+	 * 收集事件
+	 * @var array 处理器，格式：[[processor, collecting_level],...]
+	 */
+	private static $handlers = [];
+
+	private static $log_dumps = [];
+	private static $while_handlers = [];
+
 	private $id;
 
 	/**
 	 * Logger constructor.
-	 * limit to singleton
 	 * @param $id
 	 */
-	private function __construct($id){
+	public function __construct($id){
 		$this->id = $id;
-	}
-
-	private function __clone(){
-		//limit to singleton
 	}
 
 	/**
@@ -46,7 +47,6 @@ class Logger {
 	 */
 	public static function instance($id = ''){
 		$id = $id ?: self::DEFAULT_ID;
-		$id = static::class.'-'.$id;
 		static $instances = [];
 		if(!$instances[$id]){
 			$instances[$id] = new static($id);
@@ -60,6 +60,7 @@ class Logger {
 	 * @return mixed|null
 	 */
 	protected function doLog($messages, $level){
+		return null;
 	}
 
 	/**
@@ -69,16 +70,6 @@ class Logger {
 	 */
 	public function __invoke(...$messages){
 		return call_user_func_array([$this, 'log'], $messages);
-	}
-
-	/**
-	 * Logger call static
-	 * @param $method
-	 * @param $args
-	 * @return mixed
-	 */
-	public static function __callStatic($method, $args){
-		return call_user_func_array([self::instance(), $method], $args);
 	}
 
 	/**
@@ -94,11 +85,23 @@ class Logger {
 
 	/**
 	 * register handler
-	 * @param $handler
-	 * @param int $min_level
+	 * @param callable $handler
+	 * @param int $collecting_level
+	 * @param string|null $filter_id
 	 */
-	public static function register($handler, $min_level = self::LOG){
-		self::$handlers[] = [$handler, $min_level];
+	public static function register($handler, $collecting_level = self::LOG, $filter_id = null){
+		self::$handlers[] = [$handler, $collecting_level, $filter_id];
+	}
+
+	/**
+	 * register while log happens on specified trigger level
+	 * @param $trigger_level
+	 * @param callable $handler
+	 * @param int $collecting_level
+	 * @param string|null $filter_id
+	 */
+	public static function registerWhile($trigger_level, $handler, $collecting_level = self::LOG, $filter_id = null){
+		self::$while_handlers[] = [$trigger_level, $handler, $collecting_level, $filter_id];
 	}
 
 	/**
@@ -107,22 +110,29 @@ class Logger {
 	 * @return mixed
 	 */
 	private function trigger($messages, $level){
-		foreach(self::$handlers as list($handler, $min_level)){
-			if($level >= $min_level){
-				$ret = null;
-				if($handler instanceof Logger){
-					$ret = $handler->doLog($messages, $level);
-				}else if(is_callable($handler)){
-					$ret = call_user_func($handler, $messages, $level);
-				}else{
-					throw new \Exception('Handler no execute able');
-				}
+		foreach(self::$handlers as list($handler, $collecting_level, $filter_id)){
+			if((!$filter_id || $filter_id == $this->id) && $level >= $collecting_level){
 				//break up
-				if($ret === false){
+				if(call_user_func($handler, $messages, $level, $this->id) === false){
 					return false;
 				}
 			}
 		}
+
+		//trigger while handlers
+		if(self::$while_handlers){
+			self::$log_dumps[] = [$messages, $level];
+			foreach(self::$while_handlers as list($trigger_level, $handler, $collecting_level, $filter_id)){
+				if((!$filter_id || $filter_id == $this->id) && $level >= $trigger_level){
+					array_walk(self::$log_dumps, function($data) use ($collecting_level, $handler){
+						if($data[1] >= $collecting_level){
+							call_user_func($handler, $data[0], $data[1], $this->id);
+						}
+					});
+				}
+			}
+		}
+
 		return $this->doLog($messages, $level);
 	}
 
@@ -132,14 +142,6 @@ class Logger {
 	 */
 	public function verbose(...$messages){
 		return $this->trigger($messages, self::VERBOSE);
-	}
-
-	/**
-	 * @param array $messages
-	 * @return mixed|null
-	 */
-	public function debug(...$messages){
-		return $this->trigger($messages, self::DEBUG);
 	}
 
 	/**

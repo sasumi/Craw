@@ -4,8 +4,10 @@ namespace Craw\Http;
 
 use Craw\Logger\Logger;
 use function Craw\data_to_string;
-use function Craw\dump;
 use function Craw\var_export_min;
+use function curl_exec;
+use function curl_init;
+use function curl_setopt_array;
 
 abstract class Curl {
 	public static $default_timeout = 10;
@@ -76,7 +78,7 @@ abstract class Curl {
 			$curl_option[CURLOPT_SSL_VERIFYHOST] = 1;
 		}
 
-		$ch = \curl_init();
+		$ch = curl_init();
 
 		//额外CURL选项
 		if($extra_curl_option && is_callable($extra_curl_option)){
@@ -85,16 +87,17 @@ abstract class Curl {
 
 		$curl_option = self::mergeCurlOptions($curl_option, $extra_curl_option);
 		$logger("> Start Fetching $url ...");
+		$logger->info('CURL Options:', self::printCurlOption($curl_option, true));
 
-		$logger->debug('CURL Options:', self::printCurlOption($curl_option, true));
+		curl_setopt_array($ch, $curl_option);
 
-		\curl_setopt_array($ch, $curl_option);
-
-		$content = \curl_exec($ch);
+		$content = curl_exec($ch);
 		$result = new Result($url, $content, $ch);
 		curl_close($ch);
-
 		$logger('  '.$result->getResultMessage());
+		if($result->http_code !== 200){
+			$logger->warn('CURL return http code error:['.$result->http_code.']', $url);
+		}
 		return $result;
 	}
 
@@ -127,6 +130,7 @@ abstract class Curl {
 		$done_index = 0;
 		$total = count($urls);
 		$mh = curl_multi_init();
+		$logger('Batch fetch contents:', $urls);
 		while($urls){
 			$current_tasks = array_slice($urls, 0, $rolling_count);
 			$urls = array_slice($urls, $rolling_count);
@@ -168,7 +172,7 @@ abstract class Curl {
 				sleep($batch_interval_time);
 			}
 		}
-		$logger->log('ALL TASK DONE');
+		$logger('ALL TASK DONE');
 		curl_multi_close($mh);
 		return $results;
 	}
@@ -198,7 +202,7 @@ abstract class Curl {
 	 * 打印CURL选项
 	 * @param $options
 	 * @param bool $as_return
-	 * @return array
+	 * @return array|null
 	 */
 	public static function printCurlOption($options, $as_return = false){
 		static $all_const_list;
@@ -213,6 +217,7 @@ abstract class Curl {
 		}
 		if(!$as_return){
 			var_export_min($prints);
+			return null;
 		}else{
 			return $prints;
 		}

@@ -54,3 +54,37 @@ var_dump($data_list);
 ## 缓存
 
 ```Context```开启缓存方法为：```Context->cacheOn(10)```，默认使用缓存目录为系统Temp/craw_cache/目录（Liunx系统为/tmp/craw_cache目录）。可通过 ```Cache::$temp_fold_name```变量重置改目录下的子文件夹名称。若需要缓存到其他磁盘目录，可执行调用```Cache::instance($dir)```重置。
+
+## 日志
+
+库提供Logger方法进行简单日志记录收集。外部调用程序通过注册方法 ```Logger::register``` 进行事件处理注册。
+
+例：
+
+```php
+<?php
+use Craw\Http\Curl;
+use Craw\Logger\Output\ConsoleOutput;
+use Craw\Logger\Output\FileOutput;
+use Craw\Logger\Logger;
+
+require_once "autoload.php";
+
+//打印所有日志信息到控制台（屏幕）
+Logger::register(new ConsoleOutput, Logger::VERBOSE);
+
+//记录等级大于或等于LOG的信息到文件
+Logger::register(new FileOutput(__DIR__.'/log/craw.debug.log'), Logger::LOG);
+
+//记录注册ID为Curl::class（一般使用类名作为注册ID）的所有日志信息到文件
+Logger::register(new FileOutput(__DIR__.'/log/craw.curl.log'), Logger::VERBOSE, Curl::class);
+
+//仅在发生WARN级别日志事件时记录所有等级大于或等于LOG的信息到文件
+Logger::registerWhile(Logger::WARN, new FileOutput(__DIR__.'/log/craw.error.log'), Logger::LOG);
+
+//自行处理信息
+Logger::register(function($messages, $level){
+	//执行处理逻辑
+}, Logger::LOG);
+```
+
