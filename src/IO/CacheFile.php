@@ -2,7 +2,7 @@
 
 namespace Craw\IO;
 
-use Craw\Logger\Logger;
+use LFPhp\Logger\Logger;
 
 class CacheFile {
 	private $cache_dir;
@@ -145,7 +145,7 @@ class CacheFile {
 	public function cache($cache_key, callable $fetcher, $expired_seconds = 60, $refresh_cache = false){
 		$logger = Logger::instance(__CLASS__);
 		if(!$expired_seconds && !$refresh_cache){
-			$logger->verbose('No expired seconds & no refresh cache, call fetcher directly.');
+			$logger->debug('No expired seconds & no refresh cache, call fetcher directly.');
 			return call_user_func($fetcher);
 		}
 		if($refresh_cache){
@@ -156,11 +156,11 @@ class CacheFile {
 
 		$data = $this->get($cache_key);
 		if(!isset($data)){
-			$logger->verbose('Cache expired or no exists, fetch again.');
+			$logger->debug('Cache expired or no exists, fetch again.');
 			$data = call_user_func($fetcher);
 			$this->set($cache_key, $data, $expired_seconds);
 		} else {
-			$logger->verbose('Cache hits:', $cache_key);
+			$logger->debug('Cache hits:', $cache_key);
 		}
 		return $data;
 	}

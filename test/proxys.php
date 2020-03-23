@@ -3,6 +3,7 @@
 use Craw\Http\Proxy;
 
 require_once "../autoload.php";
+require_once "../vendor/autoload.php";
 
 $list = [
 	['127.0.0.1', '8888'],

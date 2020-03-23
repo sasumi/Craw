@@ -57,34 +57,5 @@ var_dump($data_list);
 
 ## 日志
 
-库提供Logger方法进行简单日志记录收集。外部调用程序通过注册方法 ```Logger::register``` 进行事件处理注册。
-
-例：
-
-```php
-<?php
-use Craw\Http\Curl;
-use Craw\Logger\Output\ConsoleOutput;
-use Craw\Logger\Output\FileOutput;
-use Craw\Logger\Logger;
-
-require_once "autoload.php";
-
-//打印所有日志信息到控制台（屏幕）
-Logger::register(new ConsoleOutput, Logger::VERBOSE);
-
-//记录等级大于或等于LOG的信息到文件
-Logger::register(new FileOutput(__DIR__.'/log/craw.debug.log'), Logger::LOG);
-
-//记录注册ID为Curl::class（一般使用类名作为注册ID）的所有日志信息到文件
-Logger::register(new FileOutput(__DIR__.'/log/craw.curl.log'), Logger::VERBOSE, Curl::class);
-
-//仅在发生WARN级别日志事件时记录所有等级大于或等于LOG的信息到文件
-Logger::registerWhile(Logger::WARN, new FileOutput(__DIR__.'/log/craw.error.log'), Logger::LOG);
-
-//自行处理信息
-Logger::register(function($messages, $level){
-	//执行处理逻辑
-}, Logger::LOG);
-```
-
+库提供fsphp\logger方法进行简单日志记录收集。
+具体使用方法请参考 https://github.com/sasumi/Logger

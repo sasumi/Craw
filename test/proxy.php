@@ -3,6 +3,8 @@
 use Craw\Http\Proxy;
 
 require_once "../autoload.php";
+require_once "../vendor/autoload.php";
+
 $proxy_host = '127.0.0.1';
 $proxy_port = '8888';
 $url = 'http://www.baidu.com';

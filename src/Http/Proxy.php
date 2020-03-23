@@ -2,6 +2,8 @@
 
 namespace Craw\Http;
 
+use function curl_setopt_array;
+
 class Proxy implements CurlOption {
 	private $type;
 	private $host;
@@ -75,7 +77,7 @@ class Proxy implements CurlOption {
 					$opt[CURLOPT_SSL_VERIFYPEER] = 0;
 					$opt[CURLOPT_SSL_VERIFYHOST] = 1;
 				}
-				\curl_setopt_array($ch, $opt);
+				curl_setopt_array($ch, $opt);
 				curl_multi_add_handle($mh, $ch);
 				$curl_handlers[$k] = [$ch, $current_tasks[$k]];
 				echo "Start Check [$check_index/$total] $proxy ......", PHP_EOL;

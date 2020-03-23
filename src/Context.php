@@ -8,7 +8,7 @@ use Craw\Http\HttpAuth;
 use Craw\Http\Proxy;
 use Craw\Http\Result;
 use Craw\IO\CacheFile;
-use Craw\Logger\Logger;
+use LFPhp\Logger\Logger;
 
 class Context {
 	public $timeout = 10;
@@ -229,8 +229,8 @@ class Context {
 		$curl_option = Curl::mergeCurlOptions($this->getCurlOption(), $extra_curl_option);
 
 		$logger = Logger::instance(__CLASS__);
-		$logger->log('Batch get list', $list_url);
-		$logger->info('Option:', $option, 'Curl Option:', Curl::printCurlOption($extra_curl_option, true));
+		$logger->info('Batch get list', $list_url);
+		$logger->debug('Option:', $option, 'Curl Option:', Curl::printCurlOption($extra_curl_option, true));
 
 		foreach(range_slice($start, $end, $rolling_count) as list($item_start, $item_end)){
 			$task_list = [];

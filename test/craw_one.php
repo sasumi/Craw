@@ -1,14 +1,16 @@
 <?php
 
 use Craw\Http\Curl;
-use Craw\Logger\Output\ConsoleOutput;
-use Craw\Logger\Output\FileOutput;
-use Craw\Logger\Logger;
+use LFPhp\Logger\LoggerLevel;
+use LFPhp\Logger\Output\ConsoleOutput;
+use LFPhp\Logger\Output\FileOutput;
+use LFPhp\Logger\Logger;
 
 require_once "../autoload.php";
+require_once "../vendor/autoload.php";
 
 $url = 'http://www.baidu.com';
-Logger::register(new FileOutput(__DIR__.'/craw.log'), Logger::LOG);
-Logger::register(new ConsoleOutput, Logger::INFO);
+Logger::register(new FileOutput(__DIR__.'/craw.log'), LoggerLevel::INFO);
+Logger::register(new ConsoleOutput, LoggerLevel::INFO);
 
 $result = Curl::getContent($url);

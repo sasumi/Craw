@@ -2,7 +2,7 @@
 
 namespace Craw\Http;
 
-use Craw\Logger\Logger;
+use LFPhp\Logger\Logger;
 use function Craw\data_to_string;
 use function Craw\var_export_min;
 use function curl_exec;
@@ -96,7 +96,7 @@ abstract class Curl {
 		curl_close($ch);
 		$logger('  '.$result->getResultMessage());
 		if($result->http_code !== 200){
-			$logger->warn('CURL return http code error:['.$result->http_code.']', $url);
+			$logger->warning('CURL return http code error:['.$result->http_code.']', $url);
 		}
 		return $result;
 	}

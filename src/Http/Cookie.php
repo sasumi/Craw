@@ -64,7 +64,6 @@ class Cookie {
 	 * @return self[]
 	 */
 	public static function updateLocalCookies($locals, $remotes){
-		$ret = [];
 		foreach($remotes as $remote){
 			foreach($locals as $k=>$local){
 				if($local->sameVar($remote)){

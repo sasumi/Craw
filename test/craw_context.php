@@ -3,6 +3,7 @@
 use Craw\Context;
 
 require_once "../autoload.php";
+require_once "../vendor/autoload.php";
 
 $url = 'http://www.baidu.com';
 echo "Fetching $url", PHP_EOL;

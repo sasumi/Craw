@@ -4,7 +4,7 @@ namespace Craw\Http;
 
 use Craw\Context;
 use Craw\Html\Page;
-use Craw\Logger\Logger;
+use LFPhp\Logger\Logger;
 
 class Result {
 	/** @var string */
