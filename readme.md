@@ -2,7 +2,17 @@
 > 当前库基于PHP CURL扩展，在 PHP5.6以上环境测试。
 > 鉴于到道德规范，请勿将本库用于非法获取未经允许网络资源。
 
-## 快速入门
+## 安装
+
+1. PHP 版本大于或等于 5.6
+2. 必须安装扩展：mb_string、curl
+
+请使用Composer进行安装：
+```shell script
+composer require lfphp/craw
+```
+
+## 使用
 
 ### 1.CURL方式获取内容
 ```php
