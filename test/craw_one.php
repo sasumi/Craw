@@ -11,7 +11,7 @@ require_once "../autoload.php";
 require_once "../vendor/autoload.php";
 
 $url = 'http://www.baidu.com';
-Logger::register(new FileOutput(__DIR__.'/craw.log'), LoggerLevel::INFO);
+Logger::register(new FileOutput(__DIR__.'/log/craw.log'), LoggerLevel::INFO);
 Logger::register(new ConsoleOutput, LoggerLevel::INFO);
 
 $result = Curl::getContent($url);
