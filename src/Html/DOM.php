@@ -2,7 +2,7 @@
 
 namespace Craw\Html;
 
-use Craw\Logger\Logger;
+use LFPhp\Logger\Logger;
 
 class DOM {
 	/** @var Node */
@@ -82,7 +82,16 @@ class DOM {
 		'tr'       => array('td' => 1, 'th' => 1, 'tr' => 1),
 	);
 
-	public function __construct($str = null, $lowercase = true, $forceTagsClosed = true, $target_charset = DEFAULT_TARGET_CHARSET, $stripRN = true, $defaultBRText = DEFAULT_BR_TEXT, $defaultSpanText = DEFAULT_SPAN_TEXT, $options = 0){
+	public function __construct(
+			$str = null,
+			$lowercase = true,
+			$forceTagsClosed = true,
+			$target_charset = DEFAULT_TARGET_CHARSET,
+			$stripRN = true,
+			$defaultBRText = DEFAULT_BR_TEXT,
+			$defaultSpanText = DEFAULT_SPAN_TEXT,
+			$options = 0
+	){
 		if($str){
 			$this->load($str, $lowercase, $stripRN, $defaultBRText, $defaultSpanText, $options);
 		}
@@ -152,15 +161,40 @@ class DOM {
 	}
 
 	public function save($filepath = ''){
-		$ret = $this->root->innertext();
+		$ret = $this->root->innerHtml();
 		if($filepath !== ''){
 			file_put_contents($filepath, $ret, LOCK_EX);
 		}
 		return $ret;
 	}
 
+	/**
+	 * @param $selector
+	 * @param null $idx
+	 * @param bool $lowercase
+	 * @return \Craw\Html\Node|\Craw\Html\Node[]
+	 */
 	public function find($selector, $idx = null, $lowercase = false){
 		return $this->root->find($selector, $idx, $lowercase);
+	}
+
+	/**
+	 * @param $selector
+	 * @param bool $lowercase
+	 * @return Node
+	 */
+	public function findOne($selector, $lowercase = false){
+		return $this->find($selector, 0, $lowercase);
+	}
+
+	/**
+	 * find all
+	 * @param $selector
+	 * @param bool $lowercase
+	 * @return Node[]
+	 */
+	public function findAll($selector, $lowercase = false){
+		return $this->find($selector, null, $lowercase);
 	}
 
 	public function clear(){
@@ -256,9 +290,8 @@ class DOM {
 
 		if(empty($charset)){
 			// https://www.w3.org/TR/html/document-metadata.html#statedef-http-equiv-content-type
-			$el = $this->root->find('meta[http-equiv=Content-Type]', 0, true);
-
-			if(!empty($el)){
+			$el = $this->root->findOne('meta[http-equiv=Content-Type]', true);
+			if($el){
 				$full_value = $el->content;
 				Logger::instance(__CLASS__)->info('meta content-type tag found'.$full_value);
 
@@ -333,7 +366,7 @@ class DOM {
 			Logger::instance(__CLASS__)->info('replacing '.$charset.' with CP1252 as its a superset');
 		}
 
-		Logger::instance(__CLASS__)->verbose('EXIT - '.$charset);
+		Logger::instance(__CLASS__)->debug('EXIT - '.$charset);
 		return $this->_charset = $charset;
 	}
 
@@ -767,14 +800,15 @@ class DOM {
 	}
 
 	public function __toString(){
-		return $this->root->innertext();
+		return $this->root->innerHtml();
 	}
 
 	public function __get($name){
 		switch($name){
 			case 'outertext':
 			case 'innertext':
-				return $this->root->innertext();
+				return $this->root->innerHtml();
+
 			case 'plaintext':
 				return $this->root->text();
 			case 'charset':

@@ -3,7 +3,7 @@
 namespace Craw\Http;
 
 use Craw\Context;
-use Craw\Html\Page;
+use Craw\Html\DOM;
 use LFPhp\Logger\Logger;
 
 class Result {
@@ -28,7 +28,7 @@ class Result {
 	/** @var Context */
 	public $context;
 
-	/** @var Page */
+	/** @var DOM */
 	private $page;
 
 	/**
@@ -129,12 +129,20 @@ class Result {
 	}
 
 	/**
-	 * 返回Page对象
-	 * @return Page
+	 * 返回DOM对象
+	 * @return DOM
 	 */
 	public function decodeAsPage(){
 		if(!$this->page){
-			$this->page = new Page($this->body);
+			$context = null;
+			$lowercase = true;
+			$forceTagsClosed = true;
+			$target_charset = DEFAULT_TARGET_CHARSET;
+			$stripRN = true;
+			$defaultBRText = DEFAULT_BR_TEXT;
+			$defaultSpanText = DEFAULT_SPAN_TEXT;
+			$this->page = new DOM(null, $lowercase, $forceTagsClosed, $target_charset, $stripRN, $defaultBRText, $defaultSpanText);
+			$this->page->load($this->body);
 		}
 		return $this->page;
 	}

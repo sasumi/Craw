@@ -1,6 +1,7 @@
 <?php
 namespace Craw\Html;
-use Craw\Logger\Logger;
+
+use LFPhp\Logger\Logger;
 
 class Node {
 	public $node_type = HDOM_TYPE_TEXT;
@@ -8,6 +9,10 @@ class Node {
 	public $attr = array();
 	public $children = array();
 	public $nodes = array();
+
+	public $text;
+	public $content;
+	public $charset;
 
 	/** @var Node */
 	public $parent = null;
@@ -28,7 +33,7 @@ class Node {
 	}
 
 	public function __toString(){
-		return $this->outertext();
+		return $this->outerHtml();
 	}
 
 	public function clear(){
@@ -211,33 +216,33 @@ class Node {
 		return $ancestor;
 	}
 
-	public function innertext(){
+	/**
+	 * get inner text;
+	 * @return string
+	 */
+	public function innerHtml(){
 		if(isset($this->_[HDOM_INFO_INNER])){
 			return $this->_[HDOM_INFO_INNER];
 		}
-
 		if(isset($this->_[HDOM_INFO_TEXT])){
 			return $this->dom->restoreNoise($this->_[HDOM_INFO_TEXT]);
 		}
-
 		$ret = '';
-
 		foreach($this->nodes as $n){
-			$ret .= $n->outertext();
+			$ret .= $n->outerHtml();
 		}
-
 		return $ret;
 	}
 
-	public function outertext(){
+	public function outerHtml(){
 		$text = '';
 		if($this->tag === 'text' && $this->text){
 			$text = ' with text: '.$this->text;
 		}
-		Logger::instance(__CLASS__)->verbose('Innertext of tag: '.$this->tag.$text);
+		Logger::instance(__CLASS__)->debug('Innertext of tag: '.$this->tag.$text);
 
 		if($this->tag === 'root'){
-			return $this->innertext();
+			return $this->innerHtml();
 		}
 
 		// todo: What is the use of this callback? Remove?
@@ -266,7 +271,7 @@ class Node {
 			}
 		}elseif($this->nodes){
 			foreach($this->nodes as $n){
-				$ret .= $this->convert_text($n->outertext());
+				$ret .= $this->convert_text($n->outerHtml());
 			}
 		}
 
@@ -325,7 +330,7 @@ class Node {
 	}
 
 	public function xmltext(){
-		$ret = $this->innertext();
+		$ret = $this->innerHtml();
 		$ret = str_ireplace('<![CDATA[', '', $ret);
 		$ret = str_replace(']]>', '', $ret);
 		return $ret;
@@ -373,6 +378,32 @@ class Node {
 		return $ret.$this->_[HDOM_INFO_ENDSPACE].'>';
 	}
 
+	/**
+	 * @param $selector
+	 * @param bool $lowercase
+	 * @return self
+	 */
+	public function findOne($selector, $lowercase = false){
+		return $this->find($selector, 0, $lowercase);
+	}
+
+	/**
+	 * find all
+	 * @param $selector
+	 * @param bool $lowercase
+	 * @return \Craw\Html\Node|\Craw\Html\Node[]
+	 */
+	public function findAll($selector, $lowercase = false){
+		return $this->find($selector, null, $lowercase);
+	}
+
+	/**
+	 * find by selector
+	 * @param $selector
+	 * @param null $idx
+	 * @param bool $lowercase
+	 * @return self[]|self
+	 */
 	public function find($selector, $idx = null, $lowercase = false){
 		$selectors = $this->parse_selector($selector);
 		if(($count = count($selectors)) === 0){
@@ -408,7 +439,6 @@ class Node {
 				$head = $ret;
 				$cmd = $selectors[$c][$l][4]; // Next Combinator
 			}
-
 			foreach($head as $k => $v){
 				if(!isset($found_keys[$k])){
 					$found_keys[$k] = 1;
@@ -433,6 +463,12 @@ class Node {
 		return (isset($found[$idx])) ? $found[$idx] : null;
 	}
 
+	/**
+	 * @param $selector
+	 * @param $ret
+	 * @param $parent_cmd
+	 * @param bool $lowercase
+	 */
 	protected function seek($selector, &$ret, $parent_cmd, $lowercase = false){
 		list($tag, $id, $class, $attributes, $cmb) = $selector;
 		$nodes = array();
@@ -512,11 +548,9 @@ class Node {
 			if($pass && $class !== '' && is_array($class) && !empty($class)){
 				if(isset($node->attr['class'])){
 					$node_classes = explode(' ', $node->attr['class']);
-
 					if($lowercase){
 						$node_classes = array_map('strtolower', $node_classes);
 					}
-
 					foreach($class as $c){
 						if(!in_array($c, $node_classes)){
 							$pass = false;
@@ -610,7 +644,7 @@ class Node {
 			unset($node);
 		}
 		// It's passed by reference so this is actually what this function returns.
-		Logger::instance(__CLASS__)->verbose('EXIT - ret: ', $ret);
+		Logger::instance(__CLASS__)->debug('EXIT - ret: ', $ret);
 	}
 
 	protected function match($exp, $pattern, $value, $case_sensitivity){
@@ -779,9 +813,9 @@ class Node {
 		}
 		switch($name){
 			case 'outertext':
-				return $this->outertext();
+				return $this->outerHtml();
 			case 'innertext':
-				return $this->innertext();
+				return $this->innerHtml();
 			case 'plaintext':
 				return $this->text();
 			case 'xmltext':
@@ -837,7 +871,7 @@ class Node {
 			$targetCharset = strtoupper($this->dom->_target_charset);
 		}
 
-		Logger::instance(__CLASS__)->log('source charset: '.$sourceCharset.' target charaset: '.$targetCharset);
+		Logger::instance(__CLASS__)->info('source charset: '.$sourceCharset.' target charaset: '.$targetCharset);
 
 		if(!empty($sourceCharset) && !empty($targetCharset) && (strcasecmp($sourceCharset, $targetCharset) != 0)){
 			// Check if the reported encoding could have been incorrect and the text is actually already UTF-8
@@ -952,7 +986,6 @@ class Node {
 					}
 				}
 			}
-
 		}
 
 		// Future enhancement:
@@ -978,7 +1011,7 @@ class Node {
 	}
 
 	public function save($filepath = ''){
-		$ret = $this->outertext();
+		$ret = $this->outerHtml();
 		if($filepath !== ''){
 			file_put_contents($filepath, $ret, LOCK_EX);
 		}
