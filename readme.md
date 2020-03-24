@@ -1,4 +1,4 @@
-# Craw 库
+# LFPhp\Craw 库
 > 当前库基于PHP CURL扩展，在 PHP5.6以上环境测试。
 > 鉴于到道德规范，请勿将本库用于非法获取未经允许网络资源。
 
@@ -17,7 +17,7 @@ composer require lfphp/craw
 ### 1.CURL方式获取内容
 ```php
 <?php    
-use Craw\Http\Curl;
+use LFPhp\Craw\Http\Curl;
 
 //引入类库自动加载文件
 include 'autoload.php';
@@ -32,9 +32,9 @@ echo "获取内容：", $result;
 ### 2.关联上下文环境方式获取内容
 ```php
 <?php
-use Craw\Context;
-use Craw\Http\Proxy;
-use Craw\Http\Result;use Craw\Http\UserAgent;
+use LFPhp\Craw\Context;
+use LFPhp\Craw\Http\Proxy;
+use LFPhp\Craw\Http\Result;use LFPhp\Craw\Http\UserAgent;
 include 'autoload.php';
 
 $data_list = Context::create() //创建上下文

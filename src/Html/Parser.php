@@ -1,7 +1,8 @@
 <?php
-namespace Craw\Html;
+namespace LFPhp\Craw\Html;
 
 use DOMDocument;
+use DOMXPath;
 
 class Parser {
 	private $html;
@@ -13,7 +14,7 @@ class Parser {
 		$this->dom = new DOMDocument();
 		@$this->dom->loadHTML($html);
 		$this->dom->normalize();
-		$this->xpath = new \DOMXPath($this->dom);
+		$this->xpath = new DOMXPath($this->dom);
 	}
 
 	/**

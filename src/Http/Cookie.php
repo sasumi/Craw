@@ -1,6 +1,6 @@
 <?php
 
-namespace Craw\Http;
+namespace LFPhp\Craw\Http;
 
 class Cookie {
 	/** @var string */
@@ -36,7 +36,7 @@ class Cookie {
 	/**
 	 * 清理过期cookie
 	 * @param self[] $cookies
-	 * @return \Craw\Http\Cookie[]
+	 * @return \LFPhp\Craw\Http\Cookie[]
 	 */
 	public static function cleanExpiredCookies(array $cookies){
 		$ret = [];

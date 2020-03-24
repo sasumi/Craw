@@ -1,11 +1,11 @@
 <?php
 
-use Craw\Http\Curl;
+use LFPhp\Craw\Http\Curl;
 use LFPhp\Logger\LoggerLevel;
 use LFPhp\Logger\Output\ConsoleOutput;
 use LFPhp\Logger\Output\FileOutput;
 use LFPhp\Logger\Logger;
-use function Craw\dump;
+use function LFPhp\Craw\dump;
 
 require_once "../autoload.php";
 require_once "../vendor/autoload.php";

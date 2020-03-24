@@ -1,13 +1,13 @@
 <?php
 
-namespace Craw;
+namespace LFPhp\Craw;
 
-use Craw\Http\Cookie;
-use Craw\Http\Curl;
-use Craw\Http\HttpAuth;
-use Craw\Http\Proxy;
-use Craw\Http\Result;
-use Craw\IO\CacheFile;
+use LFPhp\Craw\Http\Cookie;
+use LFPhp\Craw\Http\Curl;
+use LFPhp\Craw\Http\HttpAuth;
+use LFPhp\Craw\Http\Proxy;
+use LFPhp\Craw\Http\Result;
+use LFPhp\Craw\IO\CacheFile;
 use LFPhp\Logger\Logger;
 
 class Context {
@@ -78,7 +78,7 @@ class Context {
 	 * 设定HTTP授权登录用户名密码
 	 * @param HttpAuth $auth
 	 * @param bool $always_on_set 是否全程保持使用
-	 * @return \Craw\Context
+	 * @return \LFPhp\Craw\Context
 	 */
 	public function setAuth(HttpAuth $auth, $always_on_set = false){
 		$this->auth = $auth;
@@ -101,7 +101,7 @@ class Context {
 	/**
 	 * 设定UA
 	 * @param string $user_agent
-	 * @return \Craw\Context
+	 * @return \LFPhp\Craw\Context
 	 */
 	public function setUserAgent($user_agent){
 		$this->user_agent = $user_agent;
@@ -198,7 +198,7 @@ class Context {
 	 * @param callable|string $url 请求URL，可使用闭包函数动态返回url，传入参数为（上次请求结果last_result, 上下文环境context)
 	 * @param null $param
 	 * @param array $extra_curl_option
-	 * @return \Craw\Http\Result
+	 * @return \LFPhp\Craw\Http\Result
 	 */
 	public function get($url, $param = null, $extra_curl_option = []){
 		if(is_callable($url)){

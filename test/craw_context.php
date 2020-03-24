@@ -1,6 +1,6 @@
 <?php
 
-use Craw\Context;
+use LFPhp\Craw\Context;
 
 require_once "../autoload.php";
 require_once "../vendor/autoload.php";

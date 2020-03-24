@@ -1,5 +1,5 @@
 <?php
-namespace Craw\Http;
+namespace LFPhp\Craw\Http;
 
 class UserAgent {
 	public static function chrome($version = '80.0.3987.132'){

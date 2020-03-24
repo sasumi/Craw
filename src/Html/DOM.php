@@ -1,6 +1,6 @@
 <?php
 
-namespace Craw\Html;
+namespace LFPhp\Craw\Html;
 
 use LFPhp\Logger\Logger;
 
@@ -10,6 +10,9 @@ class DOM {
 
 	/** @var Node[] */
 	public $nodes = array();
+
+	/** @var Node[] */
+	public $children = [];
 
 	/** @var callable */
 	public $callback = null;
@@ -172,7 +175,7 @@ class DOM {
 	 * @param $selector
 	 * @param null $idx
 	 * @param bool $lowercase
-	 * @return \Craw\Html\Node|\Craw\Html\Node[]
+	 * @return \LFPhp\Craw\Html\Node|\LFPhp\Craw\Html\Node[]
 	 */
 	public function find($selector, $idx = null, $lowercase = false){
 		return $this->root->find($selector, $idx, $lowercase);
@@ -267,13 +270,13 @@ class DOM {
 					return true;
 				}
 			}
-
 			// Add a text node for text between tags
 			$node = new Node($this);
 			++$this->cursor;
 			$node->_[HDOM_INFO_TEXT] = $s;
 			$this->link_nodes($node, false);
 		}
+		return false;
 	}
 
 	protected function parseCharset(){
@@ -797,6 +800,7 @@ class DOM {
 				return $noiseElement;
 			}
 		}
+		return null;
 	}
 
 	public function __toString(){
@@ -816,6 +820,7 @@ class DOM {
 			case 'target_charset':
 				return $this->_target_charset;
 		}
+		return null;
 	}
 
 	public function childNodes($idx = -1){

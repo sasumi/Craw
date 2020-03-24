@@ -1,9 +1,10 @@
 <?php
 
-namespace Craw;
+namespace LFPhp\Craw;
 
 use DateTime;
 use DateTimeZone;
+use Exception;
 
 /**
  * check array is an assoc array
@@ -61,7 +62,7 @@ function data_to_string($data){
 				if(is_scalar($v)){
 					$d[] = urlencode($k).'='.urlencode($v);
 				}else{
-					throw new \Exception('Data type no support(more than 3 dimension array no supported)');
+					throw new Exception('Data type no support(more than 3 dimension array no supported)');
 				}
 			}
 		}else{
@@ -69,7 +70,7 @@ function data_to_string($data){
 		}
 		return join('&', $d);
 	}
-	throw new \Exception('Data type no supported');
+	throw new Exception('Data type no supported');
 }
 
 function dump(){
@@ -174,7 +175,7 @@ function array_clear_empty($data, $recursive = true){
 function preg_match_one($regex, $str, $throw_exception = true){
 	$hit = preg_match($regex, $str, $matches);
 	if(!$hit && $throw_exception){
-		throw new \Exception("No match regexp: $regex, for string:$str");
+		throw new Exception("No match regexp: $regex, for string:$str");
 	}
 	if($hit){
 		return trim($matches[1]);

@@ -1,6 +1,6 @@
 <?php
 
-namespace Craw\Http;
+namespace LFPhp\Craw\Http;
 
 use function curl_setopt_array;
 
@@ -37,7 +37,7 @@ class Proxy implements CurlOption {
 	 * 测试
 	 * @param $test_url
 	 * @param int $timeout
-	 * @return \Craw\Http\Result
+	 * @return \LFPhp\Craw\Http\Result
 	 */
 	public function test($test_url, $timeout = 10){
 		$opt = $this->getCurlOption();
@@ -48,7 +48,7 @@ class Proxy implements CurlOption {
 
 	/**
 	 * 批量并发测试
-	 * @param \Craw\Http\Proxy[] $proxies
+	 * @param \LFPhp\Craw\Http\Proxy[] $proxies
 	 * @param $test_url
 	 * @param int $rolling_count
 	 * @param int $timeout

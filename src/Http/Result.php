@@ -1,9 +1,9 @@
 <?php
 
-namespace Craw\Http;
+namespace LFPhp\Craw\Http;
 
-use Craw\Context;
-use Craw\Html\DOM;
+use LFPhp\Craw\Context;
+use LFPhp\Craw\Html\DOM;
 use LFPhp\Logger\Logger;
 
 class Result {
@@ -64,7 +64,7 @@ class Result {
 	 * 流程继续判定
 	 * @param callable $judge_callback 判定函数，传入参数：(result,context)，若返回true，则继续执行当前context
 	 * @param callable|null $interrupt_callback 内容判定失败回调，传入参数(result,context)，若回调返回context，则继续返回，否则程序退出
-	 * @return \Craw\Context
+	 * @return \LFPhp\Craw\Context
 	 */
 	public function continueWhile(callable $judge_callback, callable $interrupt_callback = null){
 		if(call_user_func($judge_callback, $this, $this->context) === true){

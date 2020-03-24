@@ -1,6 +1,6 @@
 <?php
 
-namespace Craw\IO;
+namespace LFPhp\Craw\IO;
 
 use LFPhp\Logger\Logger;
 

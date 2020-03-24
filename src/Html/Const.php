@@ -1,5 +1,5 @@
 <?php
-namespace Craw\Html;
+namespace LFPhp\Craw\Html;
 
 define('HDOM_TYPE_ELEMENT', 1);
 define('HDOM_TYPE_COMMENT', 2);

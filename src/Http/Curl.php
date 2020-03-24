@@ -1,10 +1,10 @@
 <?php
 
-namespace Craw\Http;
+namespace LFPhp\Craw\Http;
 
 use LFPhp\Logger\Logger;
-use function Craw\data_to_string;
-use function Craw\var_export_min;
+use function LFPhp\Craw\data_to_string;
+use function LFPhp\Craw\var_export_min;
 use function curl_exec;
 use function curl_init;
 use function curl_setopt_array;
@@ -21,7 +21,7 @@ abstract class Curl {
 	 * @param $url
 	 * @param array|string|null $data
 	 * @param $extra_curl_option
-	 * @return \Craw\Http\Result
+	 * @return Result
 	 */
 	public static function getContent($url, $data = null, $extra_curl_option = null){
 		return self::request($url, $data, self::REQUEST_METHOD_GET, $extra_curl_option);
@@ -31,7 +31,7 @@ abstract class Curl {
 	 * @param $url
 	 * @param array|string|null $data
 	 * @param null $extra_curl_option
-	 * @return \Craw\Http\Result
+	 * @return Result
 	 */
 	public static function postContent($url, $data = null, $extra_curl_option = null){
 		return self::request($url, $data, self::REQUEST_METHOD_POST, $extra_curl_option);
@@ -43,7 +43,7 @@ abstract class Curl {
 	 * @param array|string|null $data
 	 * @param string $request_method
 	 * @param array|null|callable $extra_curl_option 额外CURL选项，如果是闭包函数，传入第一个参数为ch
-	 * @return \Craw\Http\Result
+	 * @return Result
 	 */
 	public static function request($url, $data = null, $request_method = self::REQUEST_METHOD_GET, $extra_curl_option = null){
 		$logger = Logger::instance(__CLASS__);

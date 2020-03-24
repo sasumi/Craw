@@ -1,6 +1,6 @@
 <?php
 
-namespace Craw\Http;
+namespace LFPhp\Craw\Http;
 
 class Lang {
 	public static function chinese(){

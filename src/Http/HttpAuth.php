@@ -1,6 +1,6 @@
 <?php
 
-namespace Craw\Http;
+namespace LFPhp\Craw\Http;
 
 class HttpAuth implements CurlOption {
 	private $user;

@@ -1,5 +1,5 @@
 <?php
-namespace Craw\Html;
+namespace LFPhp\Craw\Html;
 
 use LFPhp\Logger\Logger;
 
@@ -17,7 +17,7 @@ class Node {
 	/** @var Node */
 	public $parent = null;
 
-	/** @var \Craw\Html\DOM */
+	/** @var \LFPhp\Craw\Html\DOM */
 	private $dom = null;
 
 	public $_ = array();
@@ -95,8 +95,8 @@ class Node {
 
 		$string .= ' HDOM_INNER_INFO: ';
 
-		if(isset($node->_[HDOM_INFO_INNER])){
-			$string .= "'".$node->_[HDOM_INFO_INNER]."'";
+		if(isset($this->_[HDOM_INFO_INNER])){
+			$string .= "'".$this->_[HDOM_INFO_INNER]."'";
 		}else{
 			$string .= ' NULL ';
 		}
@@ -391,7 +391,7 @@ class Node {
 	 * find all
 	 * @param $selector
 	 * @param bool $lowercase
-	 * @return \Craw\Html\Node|\Craw\Html\Node[]
+	 * @return \LFPhp\Craw\Html\Node|\LFPhp\Craw\Html\Node[]
 	 */
 	public function findAll($selector, $lowercase = false){
 		return $this->find($selector, null, $lowercase);
@@ -842,6 +842,7 @@ class Node {
 		}
 
 		$this->attr[$name] = $value;
+		return null;
 	}
 
 	public function __isset($name){
