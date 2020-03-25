@@ -2,8 +2,8 @@
 
 namespace LFPhp\Craw\IO;
 
-use function LFPhp\Craw\array_clear_empty;
-use function LFPhp\Craw\is_assoc_array;
+use function LFPhp\Func\array_clear_empty;
+use function LFPhp\Func\is_assoc_array;
 
 abstract class CSV {
 	/**

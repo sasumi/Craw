@@ -47,3 +47,46 @@
 09:24:26 03/24 LFPhp\Craw\Html\Node - debug - Innertext of tag: a
 09:24:26 03/24 LFPhp\Craw\Html\Node - debug - Innertext of tag: text
 09:24:26 03/24 LFPhp\Craw\Html\Node - info - source charset: UTF-8 target charaset: UTF-8
+10:23:38 03/25 LFPhp\Craw\Http\Curl - info - > Start Fetching http://www.baidu.com ...
+10:23:38 03/25 LFPhp\Craw\Http\Curl - info - CURL Options: array('CURLOPT_ENCODING'=>'gzip','CURLOPT_RETURNTRANSFER'=>true,'CURLOPT_TIMEOUT'=>10,'CURLOPT_URL'=>'http://www.baidu.com','CURLOPT_ACCEPT_ENCODING'=>'gzip')
+10:23:38 03/25 LFPhp\Craw\Http\Result - info - Result curl info: array('url'=>'http://www.baidu.com','content_type'=>'text/html;charset=utf-8','http_code'=>200,'header_size'=>1169,'request_size'=>75,'filetime'=>-1,'ssl_verify_result'=>0,'redirect_count'=>0,'total_time'=>0.10803,'namelookup_time'=>0.022383,'connect_time'=>0.033402,'pretransfer_time'=>0.034183,'size_upload'=>0.0,'size_download'=>50449.0,'speed_download'=>467120.0,'speed_upload'=>0.0,'download_content_length'=>-1.0,'upload_content_length'=>-1.0,'starttransfer_time'=>0.079993,'redirect_time'=>0.0,'redirect_url'=>'','primary_ip'=>'14.215.177.39','certinfo'=>array(),'primary_port'=>80,'local_ip'=>'127.0.0.1','local_port'=>55757,'http_version'=>2,'protocol'=>1,'ssl_verifyresult'=>0,'scheme'=>'HTTP','appconnect_time_us'=>0,'connect_time_us'=>33402,'namelookup_time_us'=>22383,'pretransfer_time_us'=>34183,'redirect_time_us'=>0,'starttransfer_time_us'=>79993,'total_time_us'=>108030)
+10:23:38 03/25 LFPhp\Craw\Http\Curl - info -   SUCCESS, content length:200313 bytes, time cost: 0.10803 sec
+10:23:38 03/25 LFPhp\Craw\Html\DOM - info - key is: ___noise___ 1000
+10:23:38 03/25 LFPhp\Craw\Html\DOM - info - key is: ___noise___ 1001
+10:23:38 03/25 LFPhp\Craw\Html\DOM - info - key is: ___noise___ 1002
+10:23:38 03/25 LFPhp\Craw\Html\DOM - info - key is: ___noise___ 1003
+10:23:38 03/25 LFPhp\Craw\Html\DOM - info - key is: ___noise___ 1004
+10:23:38 03/25 LFPhp\Craw\Html\DOM - info - key is: ___noise___ 1005
+10:23:38 03/25 LFPhp\Craw\Html\DOM - info - key is: ___noise___ 1006
+10:23:38 03/25 LFPhp\Craw\Html\DOM - info - key is: ___noise___ 1007
+10:23:38 03/25 LFPhp\Craw\Html\DOM - info - key is: ___noise___ 1008
+10:23:38 03/25 LFPhp\Craw\Html\DOM - info - key is: ___noise___ 1009
+10:23:38 03/25 LFPhp\Craw\Html\DOM - info - key is: ___noise___ 1010
+10:23:38 03/25 LFPhp\Craw\Html\DOM - info - key is: ___noise___ 1011
+10:23:38 03/25 LFPhp\Craw\Html\DOM - info - key is: ___noise___ 1012
+10:23:38 03/25 LFPhp\Craw\Html\DOM - info - key is: ___noise___ 1013
+10:23:38 03/25 LFPhp\Craw\Html\DOM - info - key is: ___noise___ 1014
+10:23:38 03/25 LFPhp\Craw\Html\DOM - info - key is: ___noise___ 1015
+10:23:38 03/25 LFPhp\Craw\Html\DOM - info - key is: ___noise___ 1016
+10:23:38 03/25 LFPhp\Craw\Html\DOM - info - key is: ___noise___ 1017
+10:23:38 03/25 LFPhp\Craw\Html\DOM - info - key is: ___noise___ 1018
+10:23:38 03/25 LFPhp\Craw\Html\DOM - info - key is: ___noise___ 1019
+10:23:38 03/25 LFPhp\Craw\Html\DOM - info - key is: ___noise___ 1020
+10:23:38 03/25 LFPhp\Craw\Html\DOM - info - key is: ___noise___ 1021
+10:23:38 03/25 LFPhp\Craw\Html\DOM - info - key is: ___noise___ 1022
+10:23:38 03/25 LFPhp\Craw\Html\DOM - info - key is: ___noise___ 1023
+10:23:38 03/25 LFPhp\Craw\Html\DOM - info - key is: ___noise___ 1024
+10:23:38 03/25 LFPhp\Craw\Html\DOM - info - key is: ___noise___ 1025
+10:23:38 03/25 LFPhp\Craw\Html\DOM - info - key is: ___noise___ 1026
+10:23:38 03/25 LFPhp\Craw\Html\DOM - info - key is: ___noise___ 1027
+10:23:38 03/25 LFPhp\Craw\Html\DOM - info - key is: ___noise___ 1028
+10:23:38 03/25 LFPhp\Craw\Html\Node - info - Matches Array:  array(0=>array(0=>'meta[http-equiv=Content-Type] ',1=>'meta',2=>'',3=>'',4=>'[http-equiv=Content-Type]',5=>' '))
+10:23:38 03/25 LFPhp\Craw\Html\Node - info - testing node: meta for attribute: http-equiv=Content-Type where nodes value is: refresh
+10:23:38 03/25 LFPhp\Craw\Html\Node - info - after match: false
+10:23:38 03/25 LFPhp\Craw\Html\Node - info - testing node: meta for attribute: http-equiv=Content-Type where nodes value is: 
+10:23:38 03/25 LFPhp\Craw\Html\Node - info - after match: false
+10:23:38 03/25 LFPhp\Craw\Html\Node - info - Matches Array:  array(0=>array(0=>'meta[charset] ',1=>'meta',2=>'',3=>'',4=>'[charset]',5=>' '))
+10:23:38 03/25 LFPhp\Craw\Html\DOM - info - mb_detect: UTF-8
+10:23:38 03/25 LFPhp\Craw\Html\Node - info - Matches Array:  array(0=>array(0=>'a ',1=>'a',2=>'',3=>'',4=>'',5=>' '))
+10:23:38 03/25 LFPhp\Craw\Html\Node - info - source charset: UTF-8 target charaset: UTF-8
+10:23:38 03/25 LFPhp\Craw\Html\Node - info - source charset: UTF-8 target charaset: UTF-8

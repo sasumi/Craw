@@ -2,12 +2,13 @@
 
 namespace LFPhp\Craw\Http;
 
+use Exception;
 use LFPhp\Logger\Logger;
-use function LFPhp\Craw\data_to_string;
-use function LFPhp\Craw\var_export_min;
 use function curl_exec;
 use function curl_init;
 use function curl_setopt_array;
+use function LFPhp\Func\is_assoc_array;
+use function LFPhp\Logger\var_export_min;
 
 abstract class Curl {
 	public static $default_timeout = 10;
@@ -57,17 +58,17 @@ abstract class Curl {
 		switch($request_method){
 			case self::REQUEST_METHOD_POST:
 				$curl_option[CURLOPT_POST] = true;
-				$curl_option[CURLOPT_POSTFIELDS] = data_to_string($data);
+				$curl_option[CURLOPT_POSTFIELDS] = self::data2Str($data);
 				break;
 			case self::REQUEST_METHOD_GET:
 				if($data){
-					$url .= (strpos($url, '?') !== false ? '&' : '?').data_to_string($data);
+					$url .= (strpos($url, '?') !== false ? '&' : '?').self::data2Str($data);
 				}
 				break;
 			case self::REQUEST_METHOD_DELETE:
 			case self::REQUEST_METHOD_PUT:
 			default:
-				$curl_option[CURLOPT_POSTFIELDS] = data_to_string($data);
+				$curl_option[CURLOPT_POSTFIELDS] = self::data2Str($data);
 				$curl_option[CURLOPT_CUSTOMREQUEST] = $request_method;
 				break;
 		}
@@ -99,6 +100,37 @@ abstract class Curl {
 			$logger->warning('CURL return http code error:['.$result->http_code.']', $url);
 		}
 		return $result;
+	}
+
+	/**
+	 * convert data to request string
+	 * @param $data
+	 * @return string
+	 * @throws \Exception
+	 */
+	private static function data2Str($data){
+		if(is_scalar($data)){
+			return (string)$data;
+		}
+		if(is_array($data)){
+			$d = [];
+			if(is_assoc_array($data)){
+				foreach($data as $k => $v){
+					if(is_null($v)){
+						continue;
+					}
+					if(is_scalar($v)){
+						$d[] = urlencode($k).'='.urlencode($v);
+					}else{
+						throw new Exception('Data type no support(more than 3 dimension array no supported)');
+					}
+				}
+			}else{
+				$d += $data;
+			}
+			return join('&', $d);
+		}
+		throw new Exception('Data type no supported');
 	}
 
 	/**

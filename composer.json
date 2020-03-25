@@ -25,7 +25,9 @@
 		"ext-iconv": "*",
 		"ext-dom": "*",
 		"ext-json": "*",
-		"lfphp/logger": "~1.0.0"
+		"lfphp/logger": "~1.0.0",
+		"lfphp/cache": "~1.0.0",
+		"lfphp/func": "~1.0.0"
 	},
 	"require-dev": {},
 	"autoload": {

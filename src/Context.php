@@ -2,13 +2,14 @@
 
 namespace LFPhp\Craw;
 
+use LFPhp\Cache\CacheFile;
 use LFPhp\Craw\Http\Cookie;
 use LFPhp\Craw\Http\Curl;
 use LFPhp\Craw\Http\HttpAuth;
 use LFPhp\Craw\Http\Proxy;
 use LFPhp\Craw\Http\Result;
-use LFPhp\Craw\IO\CacheFile;
 use LFPhp\Logger\Logger;
+use function LFPhp\Func\range_slice;
 
 class Context {
 	public $timeout = 10;
@@ -204,7 +205,7 @@ class Context {
 		if(is_callable($url)){
 			$url = call_user_func($url, $this->last_result, $this);
 		}
-		$result = CacheFile::inTemp()->cache([$url, $param], function() use ($url, $param, $extra_curl_option){
+		$result = CacheFile::instance()->cache(serialize([$url, $param]), function() use ($url, $param, $extra_curl_option){
 			return Curl::getContent($url, $param, Curl::mergeCurlOptions($this->getCurlOption(), $extra_curl_option));
 		}, $this->cache_time);
 		$this->afterRequest($result);
@@ -275,7 +276,7 @@ class Context {
 		if(is_callable($url)){
 			$url = call_user_func($url, $this->last_result, $this);
 		}
-		$result = CacheFile::inTemp()->cache([$url, $param], function() use ($url, $param, $extra_curl_option){
+		$result = CacheFile::instance()->cache(serialize([$url, $param]), function() use ($url, $param, $extra_curl_option){
 			return Curl::postContent($url, $param, Curl::mergeCurlOptions($this->getCurlOption(), $extra_curl_option));
 		}, $this->cache_time);
 		$this->afterRequest($result);
