@@ -6,11 +6,11 @@ use LFPhp\Logger\Logger;
 use function curl_setopt_array;
 
 class Proxy implements CurlOption {
-	private $type;
-	private $host;
-	private $port;
-	private $user;
-	private $password;
+	public $type;
+	public $host;
+	public $port;
+	public $user;
+	public $password;
 
 	public function __construct($host, $port, $user = '', $password = '', $type = CURLPROXY_HTTP){
 		$this->host = $host;

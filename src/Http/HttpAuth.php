@@ -3,8 +3,8 @@
 namespace LFPhp\Craw\Http;
 
 class HttpAuth implements CurlOption {
-	private $user;
-	private $password;
+	public $user;
+	public $password;
 
 	/**
 	 * @param array $headers

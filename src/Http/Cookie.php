@@ -4,22 +4,22 @@ namespace LFPhp\Craw\Http;
 
 class Cookie {
 	/** @var string */
-	private $domain;
+	public $domain;
 
 	/** @var string */
-	private $key;
+	public $key;
 
 	/** @var string */
-	private $value;
+	public $value;
 
 	/** @var integer timestamp */
-	private $expires;
+	public $expires;
 
 	/** @var string */
-	private $path;
+	public $path;
 
 	/** @var bool */
-	private $http_only;
+	public $http_only;
 
 	public function __construct($key, $value, $expires = null, $domain = null, $path = null, $http_only = null){
 		$this->key = $key;
