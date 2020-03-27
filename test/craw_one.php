@@ -15,5 +15,5 @@ Logger::registerGlobal(new FileOutput(__DIR__.'/log/craw.log'), LoggerLevel::INF
 Logger::registerGlobal(new ConsoleOutput, LoggerLevel::INFO);
 
 $result = Curl::getContent($url);
-$a = $result->decodeAsPage()->findOne('a');
-dump($a->getAttribute('href'), $a->outerHtml(), $a->getAllAttributes(), 1);
+$a = $result->decodeAsPage()->find('a');
+dump($a->getAttribute('href'), $a->html(), 1);

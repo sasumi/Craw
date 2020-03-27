@@ -3,8 +3,8 @@
 namespace LFPhp\Craw\Http;
 
 use LFPhp\Craw\Context;
-use LFPhp\Craw\Html\DOM;
 use LFPhp\Logger\Logger;
+use Rct567\DomQuery\DomQuery;
 
 class Result {
 	/** @var string */
@@ -28,7 +28,7 @@ class Result {
 	/** @var Context */
 	public $context;
 
-	/** @var DOM */
+	/** @var \Rct567\DomQuery\DomQuery */
 	private $page;
 
 	/**
@@ -130,19 +130,10 @@ class Result {
 
 	/**
 	 * 返回DOM对象
-	 * @return DOM
 	 */
 	public function decodeAsPage(){
 		if(!$this->page){
-			$context = null;
-			$lowercase = true;
-			$forceTagsClosed = true;
-			$target_charset = DEFAULT_TARGET_CHARSET;
-			$stripRN = true;
-			$defaultBRText = DEFAULT_BR_TEXT;
-			$defaultSpanText = DEFAULT_SPAN_TEXT;
-			$this->page = new DOM(null, $lowercase, $forceTagsClosed, $target_charset, $stripRN, $defaultBRText, $defaultSpanText);
-			$this->page->load($this->body);
+			$this->page = new DomQuery($this->body);
 		}
 		return $this->page;
 	}

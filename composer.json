@@ -27,7 +27,8 @@
 		"ext-json": "*",
 		"lfphp/logger": "~1.0.0",
 		"lfphp/cache": "~1.0.0",
-		"lfphp/func": "~1.0.0"
+		"lfphp/func": "~1.0.0",
+		"rct567/dom-query": "~0.8.0"
 	},
 	"require-dev": {},
 	"autoload": {

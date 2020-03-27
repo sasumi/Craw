@@ -8,7 +8,7 @@ use function curl_exec;
 use function curl_init;
 use function curl_setopt_array;
 use function LFPhp\Func\is_assoc_array;
-use function LFPhp\Logger\var_export_min;
+use function LFPhp\Func\var_export_min;
 
 abstract class Curl {
 	public static $default_timeout = 10;
