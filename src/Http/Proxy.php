@@ -2,6 +2,7 @@
 
 namespace LFPhp\Craw\Http;
 
+use LFPhp\Logger\Logger;
 use function curl_setopt_array;
 
 class Proxy implements CurlOption {
@@ -50,16 +51,19 @@ class Proxy implements CurlOption {
 	 * 批量并发测试
 	 * @param \LFPhp\Craw\Http\Proxy[] $proxies
 	 * @param $test_url
+	 * @param callable|null $on_item_done
 	 * @param int $rolling_count
 	 * @param int $timeout
 	 */
-	public static function testConcurrent(array $proxies, $test_url, $rolling_count = 10, $timeout = 10){
+	public static function testConcurrent(array $proxies, $test_url, $on_item_done = null, $rolling_count = 10, $timeout = 10){
 		set_time_limit(0);
 		$tasks = $proxies;
 		$check_index = 0;
 		$done_index = 0;
 		$total = count($tasks);
 		$mh = curl_multi_init();
+
+		$logger = Logger::instance(__CLASS__);
 
 		while($tasks){
 			$current_tasks = array_slice($tasks, 0, $rolling_count);
@@ -80,7 +84,7 @@ class Proxy implements CurlOption {
 				curl_setopt_array($ch, $opt);
 				curl_multi_add_handle($mh, $ch);
 				$curl_handlers[$k] = [$ch, $current_tasks[$k]];
-				echo "Start Check [$check_index/$total] $proxy ......", PHP_EOL;
+				$logger->info("Start Check [$check_index/$total] $proxy ......");
 			}
 
 			// execute the handles
@@ -93,12 +97,15 @@ class Proxy implements CurlOption {
 			foreach($curl_handlers as $k => list($ch, $proxy)){
 				$done_index++;
 				$rst = new Result($test_url, curl_multi_getcontent($ch), $ch);
+				if($on_item_done){
+					$on_item_done($proxy, $rst);
+				}
 				curl_multi_remove_handle($mh, $ch);
 				$msg = $rst->getResultMessage();
-				echo "Check Done  [$done_index/$total] {$proxy} {$msg}  ", ($rst->total_time*1000).'ms',PHP_EOL;
+				$logger->info("Check Done  [$done_index/$total] {$proxy} {$msg}  ", ($rst->total_time*1000).'ms');
 			}
 		}
-		echo 'ALL TASK DONE', PHP_EOL;
+		$logger->info('ALL TASK DONE');
 		curl_multi_close($mh);
 	}
 

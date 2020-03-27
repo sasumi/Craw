@@ -19,6 +19,6 @@ foreach($list as list($host, $port)){
 	$proxy_list[] = new Proxy($host, $port);
 }
 echo "Task start count:".count($proxy_list), PHP_EOL;
-Proxy::testConcurrent($proxy_list, 'http://www.baidu.com', 10);
+Proxy::testConcurrent($proxy_list, 'http://www.baidu.com');
 
 echo "All proxies tested.", PHP_EOL;
