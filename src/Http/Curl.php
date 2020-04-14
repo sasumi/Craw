@@ -2,136 +2,13 @@
 
 namespace LFPhp\Craw\Http;
 
-use Exception;
 use LFPhp\Logger\Logger;
-use function curl_exec;
 use function curl_init;
 use function curl_setopt_array;
-use function LFPhp\Func\is_assoc_array;
-use function LFPhp\Func\var_export_min;
+use function LFPhp\Func\curl_merge_options;
 
 abstract class Curl {
 	public static $default_timeout = 10;
-
-	const REQUEST_METHOD_GET = 'GET';
-	const REQUEST_METHOD_POST = 'POST';
-	const REQUEST_METHOD_DELETE = 'DELETE';
-	const REQUEST_METHOD_PUT = 'PUT';
-
-	/**
-	 * @param $url
-	 * @param array|string|null $data
-	 * @param $extra_curl_option
-	 * @return Result
-	 */
-	public static function getContent($url, $data = null, $extra_curl_option = null){
-		return self::request($url, $data, self::REQUEST_METHOD_GET, $extra_curl_option);
-	}
-
-	/**
-	 * @param $url
-	 * @param array|string|null $data
-	 * @param null $extra_curl_option
-	 * @return Result
-	 */
-	public static function postContent($url, $data = null, $extra_curl_option = null){
-		return self::request($url, $data, self::REQUEST_METHOD_POST, $extra_curl_option);
-	}
-
-	/**
-	 * CURL请求
-	 * @param $url
-	 * @param array|string|null $data
-	 * @param string $request_method
-	 * @param array|null|callable $extra_curl_option 额外CURL选项，如果是闭包函数，传入第一个参数为ch
-	 * @return Result
-	 */
-	public static function request($url, $data = null, $request_method = self::REQUEST_METHOD_GET, $extra_curl_option = null){
-		$logger = Logger::instance(__CLASS__);
-		$curl_option = [
-			CURLOPT_RETURNTRANSFER => true, //返回内容部分
-			CURLOPT_TIMEOUT        => self::$default_timeout,
-			CURLOPT_ENCODING       => 'gzip',
-		];
-
-		//处理request method
-		switch($request_method){
-			case self::REQUEST_METHOD_POST:
-				$curl_option[CURLOPT_POST] = true;
-				$curl_option[CURLOPT_POSTFIELDS] = self::data2Str($data);
-				break;
-			case self::REQUEST_METHOD_GET:
-				if($data){
-					$url .= (strpos($url, '?') !== false ? '&' : '?').self::data2Str($data);
-				}
-				break;
-			case self::REQUEST_METHOD_DELETE:
-			case self::REQUEST_METHOD_PUT:
-			default:
-				$curl_option[CURLOPT_POSTFIELDS] = self::data2Str($data);
-				$curl_option[CURLOPT_CUSTOMREQUEST] = $request_method;
-				break;
-		}
-
-		$curl_option[CURLOPT_URL] = $url;
-		if(stripos($url, 'https://') !== false){
-			$curl_option[CURLOPT_SSL_VERIFYPEER] = 0;
-			$curl_option[CURLOPT_SSL_VERIFYHOST] = 1;
-		}
-
-		$ch = curl_init();
-
-		//额外CURL选项
-		if($extra_curl_option && is_callable($extra_curl_option)){
-			$extra_curl_option = $extra_curl_option($ch);
-		}
-
-		$curl_option = self::mergeCurlOptions($curl_option, $extra_curl_option);
-		$logger("> Start Fetching $url ...");
-		$logger->info('CURL Options:', self::printCurlOption($curl_option, true));
-
-		curl_setopt_array($ch, $curl_option);
-
-		$content = curl_exec($ch);
-		$result = new Result($url, $content, $ch);
-		curl_close($ch);
-		$logger('  '.$result->getResultMessage());
-		if($result->http_code !== 200){
-			$logger->warning('CURL return http code error:['.$result->http_code.']', $url);
-		}
-		return $result;
-	}
-
-	/**
-	 * convert data to request string
-	 * @param $data
-	 * @return string
-	 * @throws \Exception
-	 */
-	private static function data2Str($data){
-		if(is_scalar($data)){
-			return (string)$data;
-		}
-		if(is_array($data)){
-			$d = [];
-			if(is_assoc_array($data)){
-				foreach($data as $k => $v){
-					if(is_null($v)){
-						continue;
-					}
-					if(is_scalar($v)){
-						$d[] = urlencode($k).'='.urlencode($v);
-					}else{
-						throw new Exception('Data type no support(more than 3 dimension array no supported)');
-					}
-				}
-			}else{
-				$d += $data;
-			}
-			return join('&', $d);
-		}
-		throw new Exception('Data type no supported');
-	}
 
 	/**
 	 * 并发获取内容
@@ -148,7 +25,7 @@ abstract class Curl {
 		$batch_interval_time = $control_option['batch_interval_time']; //每批请求之间间隔时间
 
 		//公用CURL选项
-		$common_option = self::mergeCurlOptions([
+		$common_option = curl_merge_options([
 			CURLOPT_RETURNTRANSFER => true, //返回内容部分
 			CURLOPT_HEADER         => true,
 			CURLOPT_ENCODING       => 'gzip',
@@ -170,7 +47,7 @@ abstract class Curl {
 			foreach($current_tasks as $k => $url){
 				$check_index++;
 				$ch = curl_init();
-				$curl_options = self::mergeCurlOptions($common_option, [
+				$curl_options = curl_merge_options($common_option, [
 					CURLOPT_URL => $url,
 				]);
 				if(stripos($url, 'https://') !== false){
@@ -207,51 +84,5 @@ abstract class Curl {
 		$logger('ALL TASK DONE');
 		curl_multi_close($mh);
 		return $results;
-	}
-
-	/**
-	 * 合并CURL选项
-	 * @param mixed ...$options
-	 * @return array
-	 */
-	public static function mergeCurlOptions(...$options){
-		$ret = [];
-		$options = array_reverse($options);
-		foreach($options as $opt){
-			if($opt instanceof CurlOption){
-				$option = $opt->getCurlOption();
-			}else{
-				$option = $opt;
-			}
-			foreach($option ?: [] as $k => $v){
-				$ret[$k] = $v;
-			}
-		}
-		return $ret;
-	}
-
-	/**
-	 * 打印CURL选项
-	 * @param $options
-	 * @param bool $as_return
-	 * @return array|null
-	 */
-	public static function printCurlOption($options, $as_return = false){
-		static $all_const_list;
-		if(!$all_const_list){
-			$all_const_list = get_defined_constants();
-		}
-		$prints = [];
-		foreach($all_const_list as $text => $v){
-			if(stripos($text, 'CURLOPT_') === 0 && isset($options[$v])){
-				$prints[$text] = $options[$v];
-			}
-		}
-		if(!$as_return){
-			var_export_min($prints);
-			return null;
-		}else{
-			return $prints;
-		}
 	}
 }

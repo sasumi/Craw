@@ -17,13 +17,13 @@ composer require lfphp/craw
 ### 1.CURL方式获取内容
 ```php
 <?php    
-use LFPhp\Craw\Http\Curl;
+use function LFPhp\func\curl_get;
 
 //引入类库自动加载文件
 include 'autoload.php';
 
 //CURL方式获取内容
-$result = Curl::getContent('http://www.baidu.com');
+$result = curl_get('http://www.baidu.com');
 
 //打印结果
 echo "执行结果：", $result->getResultMessage(), PHP_EOL;

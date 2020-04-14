@@ -4,6 +4,7 @@ namespace LFPhp\Craw\Http;
 
 use LFPhp\Logger\Logger;
 use function curl_setopt_array;
+use function LFPhp\Func\curl_get;
 
 class Proxy implements CurlOption {
 	public $type;
@@ -38,12 +39,12 @@ class Proxy implements CurlOption {
 	 * 测试
 	 * @param $test_url
 	 * @param int $timeout
-	 * @return \LFPhp\Craw\Http\Result
+	 * @return array
 	 */
 	public function test($test_url, $timeout = 10){
 		$opt = $this->getCurlOption();
 		$opt[CURLOPT_TIMEOUT] = $timeout;
-		$rst = Curl::getContent($test_url, null, $opt);
+		$rst = curl_get($test_url, null, $opt);
 		return $rst;
 	}
 

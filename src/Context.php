@@ -9,6 +9,10 @@ use LFPhp\Craw\Http\HttpAuth;
 use LFPhp\Craw\Http\Proxy;
 use LFPhp\Craw\Http\Result;
 use LFPhp\Logger\Logger;
+use function LFPhp\Func\curl_get;
+use function LFPhp\Func\curl_merge_options;
+use function LFPhp\Func\curl_post;
+use function LFPhp\Func\curl_print_option;
 use function LFPhp\Func\range_slice;
 
 class Context {
@@ -206,7 +210,7 @@ class Context {
 			$url = call_user_func($url, $this->last_result, $this);
 		}
 		$result = CacheFile::instance()->cache(serialize([$url, $param]), function() use ($url, $param, $extra_curl_option){
-			return Curl::getContent($url, $param, Curl::mergeCurlOptions($this->getCurlOption(), $extra_curl_option));
+			return curl_get($url, $param, curl_merge_options($this->getCurlOption(), $extra_curl_option));
 		}, $this->cache_time);
 		$this->afterRequest($result);
 		return $result;
@@ -227,11 +231,11 @@ class Context {
 		list($start, $end) = $page_offset;
 
 		$all_results = [];
-		$curl_option = Curl::mergeCurlOptions($this->getCurlOption(), $extra_curl_option);
+		$curl_option = curl_merge_options($this->getCurlOption(), $extra_curl_option);
 
 		$logger = Logger::instance(__CLASS__);
 		$logger->info('Batch get list', $list_url);
-		$logger->debug('Option:', $option, 'Curl Option:', Curl::printCurlOption($extra_curl_option, true));
+		$logger->debug('Option:', $option, 'Curl Option:', curl_print_option($extra_curl_option, true));
 
 		foreach(range_slice($start, $end, $rolling_count) as list($item_start, $item_end)){
 			$task_list = [];
@@ -277,7 +281,7 @@ class Context {
 			$url = call_user_func($url, $this->last_result, $this);
 		}
 		$result = CacheFile::instance()->cache(serialize([$url, $param]), function() use ($url, $param, $extra_curl_option){
-			return Curl::postContent($url, $param, Curl::mergeCurlOptions($this->getCurlOption(), $extra_curl_option));
+			return curl_post($url, $param, curl_merge_options($this->getCurlOption(), $extra_curl_option));
 		}, $this->cache_time);
 		$this->afterRequest($result);
 		return $result;
@@ -315,11 +319,11 @@ class Context {
 		];
 
 		if($this->proxy){
-			$options = Curl::mergeCurlOptions($options, $this->proxy->getCurlOption());
+			$options = curl_merge_options($options, $this->proxy->getCurlOption());
 		}
 
 		if($this->auth){
-			$options = Curl::mergeCurlOptions($options, $this->auth);
+			$options = curl_merge_options($options, $this->auth);
 		}
 
 		if($this->cookies){
