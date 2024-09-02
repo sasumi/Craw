@@ -1,0 +1,99 @@
+<?php
+
+namespace LFPhp\Craw;
+
+$urls[] = 'http://www.baidu.com/?kw=asdfasf';
+$urls[] = 'http://www.baidu.com/?kw=asdfasf';
+$urls[] = 'http://www.baidu.com/?kw=asdfasf';
+$urls[] = 'http://www.baidu.com/?kw=asdfasf';
+$urls[] = 'http://www.baidu.com/?kw=asdfasf';
+$urls[] = 'http://www.baidu.com/?kw=asdfasf';
+
+function curl_default_option($url = '', $custom_option = []){
+	$curl_options = array_merge([
+		CURLOPT_RETURNTRANSFER => true, //返回内容部分
+		CURLOPT_HEADER         => true,
+		CURLOPT_ENCODING       => 'gzip',
+		CURLOPT_TIMEOUT        => 10,
+	], $custom_option);
+
+	if($url){
+		$curl_options[CURLOPT_URL] = $url;
+		if(stripos($url, 'https://') !== false){
+			$curl_options[CURLOPT_SSL_VERIFYPEER] = 0;
+			$curl_options[CURLOPT_SSL_VERIFYHOST] = 1;
+		}
+	}
+	return $curl_options;
+}
+
+function curl_concurrent($curl_option_fetcher, $option = [
+	'rolling_window' => 10,
+	'on_item_start'  => null,
+	'on_item_finish' => null,
+]){
+
+
+	$mh = curl_multi_init();
+
+	for($i = 0; $i < $option['rolling_window']; $i++){
+		$curl_opt = $curl_option_fetcher();
+		if(!$curl_opt){
+			break;
+		}
+		$ch = curl_init();
+		curl_setopt_array($ch, $curl_opt);
+		curl_multi_add_handle($mh, $ch);
+	}
+
+	$active = 0;
+	do{
+		while(($mrc = curl_multi_exec($mh, $active)) == CURLM_CALL_MULTI_PERFORM);
+		if($mrc != CURLM_OK){
+			break;
+		}
+		while($curl_result = curl_multi_info_read($mh)){
+			//单个任务完成
+			$info = curl_getinfo($curl_result['handle']);
+			$body = null;
+			if($info['http_code'] == 200){
+				$body = curl_multi_getcontent($curl_result['handle']); //获取结果
+			}
+			$option['on_item_finish']($info['http_code'], $body);
+			curl_multi_remove_handle($mh, $curl_result['handle']);
+			curl_close($curl_result['handle']);
+
+			//添加新任务
+			$curl_opt = $curl_option_fetcher();
+			if(!$curl_opt){
+				break;
+			}
+			$ch = curl_init();
+			curl_setopt_array($ch, $curl_opt);
+			curl_multi_add_handle($mh, $ch);
+		}
+	} while($active);
+	curl_multi_close($mh);
+}
+
+function curl_multi_exec_full($mh, &$still_running){
+	do{
+		$state = curl_multi_exec($mh, $still_running);
+	} while($still_running > 0 && $state === CURLM_CALL_MULTI_PERFORM && curl_multi_select($mh, 0.1));
+	return $state;
+}
+
+function curl_multi_wait($mh, $minTime = 0.001, $maxTime = 1){
+	$umin = $minTime*1000000;
+
+	$start_time = microtime(true);
+	$num_descriptors = curl_multi_select($mh, $maxTime);
+	if($num_descriptors === -1){
+		usleep($umin);
+	}
+
+	$timespan = (microtime(true) - $start_time);
+	if($timespan < $umin){
+		usleep($umin - $timespan);
+	}
+}
