@@ -6,6 +6,7 @@ use Exception;
 use LFPhp\Logger\Logger;
 use function LFPhp\Func\csv_format;
 use function LFPhp\Func\file_lines;
+use function LFPhp\Func\file_put_contents_safe;
 use function LFPhp\Func\file_read_by_line;
 use function LFPhp\Func\mkdir_by_file;
 
@@ -39,7 +40,7 @@ function list_file_save_rows($list_file, $rows = []){
 		$tmp[] = json_encode($row, JSON_UNESCAPED_UNICODE);
 	}
 	Logger::debug('List file created:'.$list_file);
-	file_put_content_safe($list_file, $tmp ? join("\n", $tmp).PHP_EOL : '');
+	file_put_contents_safe($list_file, $tmp ? join("\n", $tmp).PHP_EOL : '');
 }
 
 /**
@@ -68,7 +69,7 @@ function list_file_to_csv($list_file, $csv_file, $field_map = []){
 			}
 			$csv_str .= join(",", csv_format(filter_fields($data, $field_map))).PHP_EOL;
 		}
-		file_put_content_safe($csv_file, $csv_str, FILE_APPEND);
+		file_put_contents_safe($csv_file, $csv_str, FILE_APPEND);
 	};
 
 	$last_line_buff = '';
@@ -98,7 +99,7 @@ function list_file_append_rows($list_file, $rows){
 	foreach($rows as $row){
 		$tmp[] = json_encode($row, JSON_UNESCAPED_UNICODE);
 	}
-	file_put_content_safe($list_file, join("\n", $tmp).PHP_EOL, FILE_APPEND);
+	file_put_contents_safe($list_file, join("\n", $tmp).PHP_EOL, FILE_APPEND);
 }
 
 function list_file_to_array($list_file){
