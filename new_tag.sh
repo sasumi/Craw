@@ -20,4 +20,4 @@ git push origin "$newTag"
 echo "$newTag" > version.txt
 git add version.txt
 git commit -m "Update version to $newTag"
-git push origin main
+git push origin master

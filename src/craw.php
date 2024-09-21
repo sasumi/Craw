@@ -177,19 +177,6 @@ function craw_cache_get($mix_keys){
 	return null;
 }
 
-function craw_curl_success($ret, &$err = null){
-	if($ret['error']){
-		$err = $ret['error'];
-	}
-	if(!$err && $ret['info']['http_code'] != 200){
-		$err = 'http code error:'.$ret['info']['http_code'];
-	}
-	if(!$err && !strlen($ret['body'])){
-		$err = 'body empty';
-	}
-	return !$err;
-}
-
 /**
  * 设置缓存
  * @param mixed $mix_keys
