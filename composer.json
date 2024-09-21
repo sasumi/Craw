@@ -34,6 +34,7 @@
 			"LFPhp\\Craw\\": "src/"
 		},
 		"files": [
+			"/src/cache.php",
 			"/src/html.php",
 			"/src/file.php",
 			"/src/craw.php"
