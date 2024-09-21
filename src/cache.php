@@ -28,17 +28,18 @@ function craw_cache_option($option = []){
 /**
  * @param $mix_keys
  * @param $payload
- * @param int $expire_secs
+ * @param int $expire_secs 如果设置为0，则从默认选项中读取
  * @return mixed|null
  * @throws \Exception
  */
-function craw_cache($mix_keys, $payload, $expire_secs = CRAW_CACHE_TIMEOUT){
+function craw_cache($mix_keys, $payload, $expire_secs = 0){
 	$data = craw_cache_get($mix_keys);
 	if(!isset($data)){
 		$data = $payload();
 		if(!isset($data)){
 			return null;
 		}
+		$expire_secs = $expire_secs ?: craw_cache_option()['DEFAULT_TIMEOUT'];
 		craw_cache_set($mix_keys, $data, $expire_secs);
 		return $data;
 	}
@@ -83,11 +84,11 @@ function craw_cache_get($mix_keys){
  * 设置缓存
  * @param mixed $mix_keys
  * @param mixed $rsp
- * @param int $expire_secs 过期时长（秒）
+ * @param int $expire_secs 过期时长（秒），如果设置为0，则从默认选项中读取
  * @return bool 是否保存成功
  * @throws \Exception
  */
-function craw_cache_set($mix_keys, $rsp, $expire_secs = CRAW_CACHE_TIMEOUT){
+function craw_cache_set($mix_keys, $rsp, $expire_secs = 0){
 	if($rsp === null){
 		throw new Exception('Cache Data no null allowed');
 	}
@@ -95,6 +96,7 @@ function craw_cache_set($mix_keys, $rsp, $expire_secs = CRAW_CACHE_TIMEOUT){
 		Logger::warning('response error, no caching', $rsp['error']);
 		return false;
 	}
+	$expire_secs = $expire_secs ?: craw_cache_option()['DEFAULT_TIMEOUT'];
 	$file = craw_cache_file($mix_keys);
 	mkdir_by_file($file);
 	$str = json_encode([

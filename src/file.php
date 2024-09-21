@@ -3,7 +3,6 @@
 namespace LFPhp\Craw;
 
 use Exception;
-use LFPhp\Logger\Logger;
 use function LFPhp\Func\csv_format;
 use function LFPhp\Func\file_lines;
 use function LFPhp\Func\file_put_contents_safe;
@@ -27,10 +26,9 @@ function filter_fields($arr, $field_map = []){
 }
 
 /**
- * create & save list file
- * @param $list_file
- * @param array $rows init rows
- * @return void
+ * 创建保存列表文件
+ * @param string $list_file
+ * @param array $rows 数据列表
  * @throws \Exception
  */
 function list_file_save_rows($list_file, $rows = []){
@@ -39,12 +37,11 @@ function list_file_save_rows($list_file, $rows = []){
 	foreach($rows as $row){
 		$tmp[] = json_encode($row, JSON_UNESCAPED_UNICODE);
 	}
-	Logger::debug('List file created:'.$list_file);
 	file_put_contents_safe($list_file, $tmp ? join("\n", $tmp).PHP_EOL : '');
 }
 
 /**
- * convert list format file to csv format file
+ * 转换列表文件成为csv文件
  * @param string $list_file
  * @param string $csv_file
  * @param array $field_map
@@ -119,6 +116,12 @@ function list_file_append_rows($list_file, $rows){
 	file_put_contents_safe($list_file, join("\n", $tmp).PHP_EOL, FILE_APPEND);
 }
 
+/**
+ * 读取列表文件所有数据到数组
+ * @param string $list_file
+ * @return array
+ * @throws \Exception
+ */
 function list_file_to_array($list_file){
 	$tmp = [];
 	file_read_by_line($list_file, function($line)use(&$tmp){

@@ -9,8 +9,6 @@ use function LFPhp\Func\curl_get;
 use function LFPhp\Func\curl_post;
 use function LFPhp\Func\format_size;
 
-const CRAW_CACHE_TIMEOUT = 86400;
-
 /**
  * 生成多页URL链接
  * @param string $url_pattern url模式
