@@ -95,6 +95,9 @@ function list_file_append_row($list_file, $row){
 }
 
 function list_file_append_rows($list_file, $rows){
+	if(!$rows){
+		return false;
+	}
 	$tmp = [];
 	foreach($rows as $row){
 		$tmp[] = json_encode($row, JSON_UNESCAPED_UNICODE);

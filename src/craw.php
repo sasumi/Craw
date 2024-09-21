@@ -77,13 +77,13 @@ function craw_curl_request_cache($url, $data, $curl_option, $is_post){
 	$cache_hit = craw_cache_hit($cache_key);
 	$cache_file = craw_cache_file($cache_key);
 	$ret = craw_cache($cache_key, function() use ($url, $data, $curl_option, $is_post){
-		Logger::info('[Req]', $url, $data);
+		Logger::debug('[Req]', $url, $data);
 		Logger::debug('[Curl OPT]', $curl_option);
 		$ret = $is_post ? curl_post($url, $data, $curl_option) : curl_get($url, $data, $curl_option);
 		return $ret ?: null;
 	});
 	if($cache_hit){
-		Logger::info('Cache Hit: '.$url.' <<< '.$cache_file.' ('.format_size(filesize($cache_file)).')');
+		Logger::debug('Cache Hit: '.$url.' <<< '.$cache_file.' ('.format_size(filesize($cache_file)).')');
 	}else{
 		Logger::debug('[Cache Set]', $url, $cache_file);
 	}
@@ -109,18 +109,18 @@ function craw_curl_concurrent_cache($curl_option_fetcher, $on_item_start = null,
 		}
 		$data = craw_cache_get($url);
 		if(isset($data)){
-			Logger::info('[Cache Hit]', $url);
+			Logger::debug('[Cache Hit]', $url);
 			$on_item_finish && $on_item_finish($data, $curl_option);
 			return false;
 		}else{
-			Logger::info('[REQ]', $url);
+			Logger::debug('[REQ]', $url);
 		}
 		return true;
 	}, function($ret, $curl_option) use ($on_item_finish){
 		//$ret['info']['url'] 可能是经过跳转解析的URL，而不是原始选项的URL，这里为了缓存，使用原始URL
 		$origin_url = $curl_option[CURLOPT_URL];
 		craw_cache_set($origin_url, $ret);
-		Logger::info('[RSP]', $origin_url, strlen($ret['body']).' bytes');
+		Logger::debug('[RSP]', $origin_url, strlen($ret['body']).' bytes');
 		$on_item_finish && $on_item_finish($ret, $curl_option);
 	}, $rolling_window);
 }
