@@ -8,10 +8,8 @@ use function LFPhp\Func\curl_concurrent;
 use function LFPhp\Func\curl_get;
 use function LFPhp\Func\curl_post;
 use function LFPhp\Func\format_size;
-use function LFPhp\Func\mkdir_by_file;
 
 const CRAW_CACHE_TIMEOUT = 86400;
-const CRAW_CACHE_FOLD = DIRECTORY_SEPARATOR.'craw_cache';
 
 /**
  * 生成多页URL链接
@@ -127,78 +125,3 @@ function craw_curl_concurrent_cache($curl_option_fetcher, $on_item_start = null,
 	}, $rolling_window);
 }
 
-/**
- * @param $mix_keys
- * @param $payload
- * @param int $expire_secs
- * @return mixed|null
- * @throws \Exception
- */
-function craw_cache($mix_keys, $payload, $expire_secs = CRAW_CACHE_TIMEOUT){
-	$data = craw_cache_get($mix_keys);
-	if(!isset($data)){
-		$data = $payload();
-		if(!isset($data)){
-			return null;
-		}
-		craw_cache_set($mix_keys, $data, $expire_secs);
-		return $data;
-	}
-	return $data;
-}
-
-/**
- * 缓存是否命中
- * @param $mix_keys
- * @return bool
- */
-function craw_cache_hit($mix_keys){
-	$data = craw_cache_get($mix_keys);
-	return isset($data);
-}
-
-function craw_cache_file($mix_keys){
-	return sys_get_temp_dir().CRAW_CACHE_FOLD.DIRECTORY_SEPARATOR.craw_cache_key($mix_keys).'.json';
-}
-
-function craw_cache_key($mix_keys){
-	return md5(json_encode($mix_keys));
-}
-
-function craw_cache_get($mix_keys){
-	$file = craw_cache_file($mix_keys);
-	if(!is_file($file) || filesize($file) === 0){
-		return null;
-	}
-	$data = json_decode(file_get_contents($file), true);
-	if(strtotime($data['expired']) > time()){
-		return $data['data'];
-	}
-	return null;
-}
-
-/**
- * 设置缓存
- * @param mixed $mix_keys
- * @param mixed $rsp
- * @param int $expire_secs 过期时长（秒）
- * @return bool 是否保存成功
- * @throws \Exception
- */
-function craw_cache_set($mix_keys, $rsp, $expire_secs = CRAW_CACHE_TIMEOUT){
-	if($rsp === null){
-		throw new Exception('Cache Data no null allowed');
-	}
-	if($rsp['error']){
-		Logger::warning('response error, no caching', $rsp['error']);
-		return false;
-	}
-	$file = craw_cache_file($mix_keys);
-	mkdir_by_file($file);
-	$str = json_encode([
-		'key'     => json_encode($mix_keys, JSON_INVALID_UTF8_IGNORE),
-		'expired' => date('Y-m-d H:i:s', time() + $expire_secs),
-		'data'    => $rsp,
-	], JSON_INVALID_UTF8_IGNORE|JSON_PRETTY_PRINT); //>= PHP7.2
-	return file_put_contents($file, $str);
-}
