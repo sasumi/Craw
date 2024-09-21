@@ -90,10 +90,24 @@ function list_file_to_csv($list_file, $csv_file, $field_map = []){
 	}
 }
 
+/**
+ * 列表文件追加一行数据
+ * @param string $list_file
+ * @param mixed $row
+ * @return void
+ * @throws \Exception
+ */
 function list_file_append_row($list_file, $row){
 	list_file_append_rows($list_file, [$row]);
 }
 
+/**
+ * 列表文件追加多行数据
+ * @param string $list_file
+ * @param array[] $rows 数据，如果为空不做操作
+ * @return false|void
+ * @throws \Exception
+ */
 function list_file_append_rows($list_file, $rows){
 	if(!$rows){
 		return false;
@@ -116,8 +130,9 @@ function list_file_to_array($list_file){
 }
 
 /**
- * @param $list_file
- * @param $payload
+ * 逐行读取列表文件
+ * @param string $list_file
+ * @param callable $payload
  * @return void
  * @throws \Exception
  */
@@ -127,5 +142,28 @@ function list_file_read_line_chunk($list_file, $payload){
 		if($text){
 			return $payload(json_decode($text, true), $line_no, $line_total);
 		}
+		return true;
 	});
+}
+
+/**
+ * 多行读取列表文件
+ * @param string $list_file
+ * @param callable $payload
+ * @param int $line_num 一次读取行数
+ * @return void
+ * @throws \Exception
+ */
+function list_file_read_lines_chunk($list_file, $payload, $line_num = 50){
+	$list = [];
+	list_file_read_line_chunk($list_file, function($row)use($payload, $line_num, &$list){
+		$list[] = $row;
+		if(count($list) >= $line_num){
+			$payload($list);
+			$list = [];
+		}
+	});
+	if($list){
+		$payload($list);
+	}
 }
