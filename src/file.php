@@ -3,11 +3,16 @@
 namespace LFPhp\Craw;
 
 use Exception;
+use LFPhp\Logger\Logger;
 use function LFPhp\Func\csv_format;
 use function LFPhp\Func\file_lines;
 use function LFPhp\Func\file_put_contents_safe;
 use function LFPhp\Func\file_read_by_line;
 use function LFPhp\Func\mkdir_by_file;
+
+/***********************************************************
+ * LIST FILE：JSON列表文件，每一行都是一个JSON
+ ***********************************************************/
 
 /**
  * @param $arr
@@ -26,9 +31,10 @@ function filter_fields($arr, $field_map = []){
 }
 
 /**
- * 创建保存列表文件
- * @param string $list_file
- * @param array $rows 数据列表
+ * create & save list file
+ * @param $list_file
+ * @param array $rows init rows
+ * @return void
  * @throws \Exception
  */
 function list_file_save_rows($list_file, $rows = []){
@@ -37,11 +43,12 @@ function list_file_save_rows($list_file, $rows = []){
 	foreach($rows as $row){
 		$tmp[] = json_encode($row, JSON_UNESCAPED_UNICODE);
 	}
+	Logger::debug('List file created:'.$list_file);
 	file_put_contents_safe($list_file, $tmp ? join("\n", $tmp).PHP_EOL : '');
 }
 
 /**
- * 转换列表文件成为csv文件
+ * convert list format file to csv format file
  * @param string $list_file
  * @param string $csv_file
  * @param array $field_map
@@ -116,12 +123,6 @@ function list_file_append_rows($list_file, $rows){
 	file_put_contents_safe($list_file, join("\n", $tmp).PHP_EOL, FILE_APPEND);
 }
 
-/**
- * 读取列表文件所有数据到数组
- * @param string $list_file
- * @return array
- * @throws \Exception
- */
 function list_file_to_array($list_file){
 	$tmp = [];
 	file_read_by_line($list_file, function($line)use(&$tmp){
@@ -159,14 +160,19 @@ function list_file_read_line_chunk($list_file, $payload){
  */
 function list_file_read_lines_chunk($list_file, $payload, $line_num = 50){
 	$list = [];
-	list_file_read_line_chunk($list_file, function($row)use($payload, $line_num, &$list){
+	$break = false;
+	list_file_read_line_chunk($list_file, function($row, $line_no, $line_total)use($payload, $line_num, &$list, &$break){
 		$list[] = $row;
 		if(count($list) >= $line_num){
-			$payload($list);
+			if($payload($list, $line_no, $line_total) === false){
+				$break = true;
+				return false;
+			}
 			$list = [];
 		}
+		return true;
 	});
-	if($list){
+	if(!$break && $list){
 		$payload($list);
 	}
 }
