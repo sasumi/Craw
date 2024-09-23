@@ -53,22 +53,26 @@ function html_get_links($html, $a_selector = 'a'){
 	return $urls;
 }
 
+/**
+ * 获取一个节点文本
+ * @param string $html
+ * @param string $selector
+ * @return string
+ */
 function html_get_inner_text($html, $selector){
-	$text = '';
-	$nodes = html_find_all($html, $selector);
-	foreach($nodes as $node){
-		$text .= node_get_inner_text($node);
-	}
-	return $text;
+	$node = html_find_one($html, $selector);
+	return $node ? node_get_inner_text($node) : '';
 }
 
+/**
+ * 获取一个节点html内容
+ * @param string $source_html
+ * @param string $selector
+ * @return string
+ */
 function html_get_inner_html($source_html, $selector){
-	$nodes = html_find_all($source_html, $selector);
-	$html = '';
-	foreach($nodes as $node){
-		$html .= node_get_inner_html($node);
-	}
-	return trim($html);
+	$node = html_find_one($source_html, $selector);
+	return $node ? trim(node_get_inner_html($node)) : '';
 }
 
 function node_get_inner_html(DOMElement $node){
