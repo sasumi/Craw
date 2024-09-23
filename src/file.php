@@ -123,6 +123,12 @@ function list_file_append_rows($list_file, $rows){
 	file_put_contents_safe($list_file, join("\n", $tmp).PHP_EOL, FILE_APPEND);
 }
 
+/**
+ * 列表文件转换成数组
+ * @param string $list_file
+ * @return array
+ * @throws \Exception
+ */
 function list_file_to_array($list_file){
 	$tmp = [];
 	file_read_by_line($list_file, function($line)use(&$tmp){
@@ -161,10 +167,14 @@ function list_file_read_line_chunk($list_file, $payload){
 function list_file_read_lines_chunk($list_file, $payload, $line_num = 50){
 	$list = [];
 	$break = false;
-	list_file_read_line_chunk($list_file, function($row, $line_no, $line_total)use($payload, $line_num, &$list, &$break){
+	$_line_total = 0;
+	$_line_no = 0;
+	list_file_read_line_chunk($list_file, function($row, $line_no, $line_total) use ($payload, $line_num, &$list, &$break, &$_line_total, &$_line_no){
+		$_line_total = $line_total;
+		$_line_no = $line_no;
 		$list[] = $row;
 		if(count($list) >= $line_num){
-			if($payload($list, $line_no, $line_total) === false){
+			if($payload($list, $line_no - count($list), $line_total) === false){
 				$break = true;
 				return false;
 			}
@@ -173,6 +183,6 @@ function list_file_read_lines_chunk($list_file, $payload, $line_num = 50){
 		return true;
 	});
 	if(!$break && $list){
-		$payload($list);
+		$payload($list, $_line_no - count($list), $_line_total);
 	}
 }
