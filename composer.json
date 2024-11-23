@@ -7,7 +7,7 @@
 	],
 	"homepage": "http://blog.yikepi.com/",
 	"type": "library",
-	"license": "Apache-2.0",
+	"license": "MIT",
 	"authors": [
 		{
 			"name": "Sasumi.H",
@@ -25,9 +25,9 @@
 		"ext-iconv": "*",
 		"ext-dom": "*",
 		"ext-json": "*",
-		"lfphp/logger": "^1.1",
 		"ext-tidy": "*",
-		"lfphp/func": "^1.3"
+		"lfphp/func": "^2.0",
+		"lfphp/logger": "^2.0"
 	},
 	"autoload": {
 		"psr-4": {

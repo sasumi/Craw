@@ -1,32 +1,32 @@
-# LFPhp\Craw 库
-> 当前库基于PHP CURL扩展，在 PHP7.2以上环境测试。
-> 鉴于到道德规范，请勿将本库用于非法获取未经允许网络资源。
+# Simple Craw library
+> The current library is based on PHP CURL extension and tested in PHP7.2 or above environment.
+> In view of ethical standards, please do not use this library to illegally obtain network resources without permission.
 
-## 安装
+## Install
 
-1. PHP 版本大于或等于 7.2
-2. 必须安装扩展：mb_string、curl、json、dom、tidy、iconv
+1. PHP version is greater than or equal to 7.2
+2. Extensions must be installed: mb_string, curl, json, dom, tidy, iconv
 
-请使用Composer进行安装：
+Please use Composer to install:
 ```shell script
 composer require lfphp/craw
 ```
 
-## 使用
+## Usage
 
-### 1.CURL方式获取内容
+### 1. CURL method to obtain content
 ```php
-<?php    
+<?php
 use function LFPhp\Craw\craw_curl_get_cache;
 
-//引入类库自动加载文件
+//Introduce class library to automatically load files
 include 'autoload.php';
 
-//CURL方式获取内容
-$result = craw_curl_get_cache('http://www.baidu.com');
+//Get content using CURL method
+$result = crawl_curl_get_cache('https://www.baidu.com');
 
-//打印结果
-echo "执行结果：", var_dump($result), PHP_EOL;
-echo "获取内容：", $result;
+//Print results
+echo "Execution result:", var_dump($result), PHP_EOL;
+echo "Get content:", $result;
 ```
-//文档待完善
+//Document to be improved

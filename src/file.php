@@ -11,7 +11,7 @@ use function LFPhp\Func\file_read_by_line;
 use function LFPhp\Func\mkdir_by_file;
 
 /***********************************************************
- * LIST FILE：JSON列表文件，每一行都是一个JSON
+ * LIST FILE FORMAT：every line is a json string
  ***********************************************************/
 
 /**
@@ -95,7 +95,7 @@ function list_file_to_csv($list_file, $csv_file, $field_map = []){
 }
 
 /**
- * 列表文件追加一行数据
+ * append json to list file
  * @param string $list_file
  * @param mixed $row
  * @return void
@@ -106,9 +106,9 @@ function list_file_append_row($list_file, $row){
 }
 
 /**
- * 列表文件追加多行数据
+ * append json list to list file
  * @param string $list_file
- * @param array[] $rows 数据，如果为空不做操作
+ * @param array[] $rows
  * @return false|void
  * @throws \Exception
  */
@@ -124,7 +124,7 @@ function list_file_append_rows($list_file, $rows){
 }
 
 /**
- * 列表文件转换成数组
+ * convert list file to array
  * @param string $list_file
  * @return array
  * @throws \Exception
@@ -140,7 +140,7 @@ function list_file_to_array($list_file){
 }
 
 /**
- * 逐行读取列表文件
+ * read list file chunk
  * @param string $list_file
  * @param callable $payload
  * @return void
@@ -157,10 +157,10 @@ function list_file_read_line_chunk($list_file, $payload){
 }
 
 /**
- * 多行读取列表文件
+ * read json file chunks
  * @param string $list_file
  * @param callable $payload
- * @param int $line_num 一次读取行数
+ * @param int $line_num line count
  * @return void
  * @throws \Exception
  */

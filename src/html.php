@@ -8,7 +8,7 @@ use tidy;
 use function LFPhp\Func\html_abstract;
 
 /**
- * @param string $html 注意，这里提交过来的html会额外追加utf8识别html片段。请提交utf8编码的html字符串
+ * @param string $html Note that the html submitted here will have additional utf8 recognition html fragments appended. Please submit utf8 encoded html string
  * @param string $selector
  * @return \DOMElement[]
  */
@@ -39,7 +39,7 @@ function html_find_one($html, $selector){
 }
 
 /**
- * 获取链接
+ * Get links from html string
  * @param string $html
  * @param string $a_selector
  * @return string[]
@@ -54,7 +54,7 @@ function html_get_links($html, $a_selector = 'a'){
 }
 
 /**
- * 获取一个节点文本
+ * get text node
  * @param string $html
  * @param string $selector
  * @return string
@@ -65,10 +65,10 @@ function html_get_inner_text($html, $selector){
 }
 
 /**
- * 获取一个节点html内容
+ * get content from node
  * @param string $source_html
  * @param string $selector
- * @return string
+ * @return string text content or innerHTML
  */
 function html_get_inner_html($source_html, $selector){
 	$node = html_find_one($source_html, $selector);
@@ -194,7 +194,7 @@ function selector_to_xpath($selector){
 }
 
 /**
- * 修复HTML标签
+ * repair html tag
  * @param $html
  * @return string
  */
@@ -204,7 +204,7 @@ function html_repair($html){
 }
 
 /**
- * 修复html标签，去除body外框架
+ * repair html tag and trim body
  * @param string $html
  * @return string
  */

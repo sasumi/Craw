@@ -10,8 +10,8 @@ use function LFPhp\Func\curl_post;
 use function LFPhp\Func\format_size;
 
 /**
- * 生成多页URL链接
- * @param string $url_pattern url模式
+ * make page url list
+ * @param string $url_pattern
  * @param int $page_total
  * @param int $page_start
  * @return array
@@ -29,7 +29,7 @@ function craw_make_page_urls($url_pattern, $page_total, $page_start = 1){
 }
 
 /**
- * 命中正则时替换，否则返回原字符串
+ * replace string via regexp
  * @param string $string
  * @param string $pattern
  * @param string $replacement
@@ -42,7 +42,7 @@ function craw_replace_on_matched($string, $pattern, $replacement = '$1', &$repla
 }
 
 /**
- * curl_get 缓存版，使用所有参数作为key
+ * curl_get cache
  * @param string $url
  * @param array|null $data
  * @param array $curl_option
@@ -53,7 +53,7 @@ function craw_curl_get_cache($url, $data = null, $curl_option = []){
 }
 
 /**
- * curl_post 缓存版，使用所有参数作为key
+ * curl_post cache
  * @param string $url
  * @param array|null $data
  * @param array $curl_option
@@ -89,12 +89,12 @@ function craw_curl_request_cache($url, $data, $curl_option, $is_post){
 }
 
 /**
- * curl_concurrent 缓存版，
- * 当前版本仅支持使用url作为缓存key
- * @param callable|array $curl_option_fetcher : array 返回CURL选项映射数组，即使只有一个url，也需要返回 [CURLOPT_URL=>$url]
- * @param callable|null $on_item_start ($curl_option) 开始执行回调，如果返回false，忽略该任务
- * @param callable|null $on_item_finish ($curl_ret, $curl_option) 请求结束回调，参数1：返回结果数组，参数2：CURL选项
- * @param int $rolling_window 滚动请求数量
+ * curl_concurrent cache
+ * cache data use url as cache key
+ * @param callable|array $curl_option_fetcher: array Returns the CURL option mapping array. Even if there is only one url, [CURLOPT_URL=>$url] needs to be returned.
+ * @param callable|null $on_item_start ($curl_option) Start executing the callback. If false is returned, the task is ignored.
+ * @param callable|null $on_item_finish ($curl_ret, $curl_option) Request end callback, parameter 1: return result array, parameter 2: CURL option
+ * @param int $rolling_window Number of rolling requests
  * @return bool
  * @throws \Exception
  */
@@ -115,7 +115,7 @@ function craw_curl_concurrent_cache($curl_option_fetcher, $on_item_start = null,
 		}
 		return true;
 	}, function($ret, $curl_option) use ($on_item_finish){
-		//$ret['info']['url'] 可能是经过跳转解析的URL，而不是原始选项的URL，这里为了缓存，使用原始URL
+		//$ret['info']['url'] It may be a URL that has been redirected and parsed, rather than the URL of the original option. For caching purposes, the original URL is used here.
 		$origin_url = $curl_option[CURLOPT_URL];
 		craw_cache_set($origin_url, $ret);
 		Logger::debug('[RSP]', $origin_url, strlen($ret['body']).' bytes');

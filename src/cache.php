@@ -10,10 +10,10 @@ use const LFPhp\Func\ONE_DAY;
 
 const CACHE_OPTION_KEY = __NAMESPACE__.'CRAW_CACHE_OPTION';
 $GLOBALS[CACHE_OPTION_KEY] = [
-	'PATH'            => sys_get_temp_dir().'/craw_cache', //缓存目录
-	'CACHE_GET'       => true, //针对GET设置缓存
-	'CACHE_POST'      => false, //针对POST设置缓存
-	'DEFAULT_TIMEOUT' => ONE_DAY, //默认过期时间
+	'PATH'            => sys_get_temp_dir().'/craw_cache', //cache directory
+	'CACHE_GET'       => true, //set cache for GET request
+	'CACHE_POST'      => false, //set cache for POST request
+	'DEFAULT_TIMEOUT' => ONE_DAY, //default expired timeout
 ];
 
 /**
@@ -28,7 +28,7 @@ function craw_cache_option($option = []){
 /**
  * @param $mix_keys
  * @param $payload
- * @param int $expire_secs 如果设置为0，则从默认选项中读取
+ * @param int $expire_secs
  * @return mixed|null
  * @throws \Exception
  */
@@ -47,7 +47,7 @@ function craw_cache($mix_keys, $payload, $expire_secs = 0){
 }
 
 /**
- * 缓存是否命中
+ * cache hits
  * @param $mix_keys
  * @return bool
  */
@@ -84,8 +84,8 @@ function craw_cache_get($mix_keys){
  * 设置缓存
  * @param mixed $mix_keys
  * @param mixed $rsp
- * @param int $expire_secs 过期时长（秒），如果设置为0，则从默认选项中读取
- * @return bool 是否保存成功
+ * @param int $expire_secs
+ * @return bool
  * @throws \Exception
  */
 function craw_cache_set($mix_keys, $rsp, $expire_secs = 0){
