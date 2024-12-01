@@ -7,6 +7,7 @@ use LFPhp\Logger\Logger;
 use function LFPhp\Func\curl_concurrent;
 use function LFPhp\Func\curl_get;
 use function LFPhp\Func\curl_post;
+use function LFPhp\Func\curl_query_success;
 use function LFPhp\Func\format_size;
 
 /**
@@ -46,7 +47,7 @@ function craw_replace_on_matched($string, $pattern, $replacement = '$1', &$repla
  * @param string $url
  * @param array|null $data
  * @param array $curl_option
- * @return mixed|null
+ * @return array|null
  */
 function craw_curl_get_cache($url, $data = null, $curl_option = []){
 	return craw_curl_request_cache($url, $data, $curl_option, false);
@@ -57,39 +58,46 @@ function craw_curl_get_cache($url, $data = null, $curl_option = []){
  * @param string $url
  * @param array|null $data
  * @param array $curl_option
- * @return mixed|null
+ * @return array|null
  */
 function craw_curl_post_cache($url, $data, $curl_option = []){
 	return craw_curl_request_cache($url, $data, $curl_option, false);
 }
 
 /**
- * @param $url
- * @param $data
- * @param $curl_option
- * @param $is_post
- * @return mixed|null
+ * craw request with caching
+ * @param string $url
+ * @param array $data
+ * @param array $curl_option
+ * @param bool $is_post
+ * @return array|null
  */
 function craw_curl_request_cache($url, $data, $curl_option, $is_post){
 	$cache_key = func_get_args();
 	$cache_hit = craw_cache_hit($cache_key);
 	$cache_file = craw_cache_file($cache_key);
-	$ret = craw_cache($cache_key, function() use ($url, $data, $curl_option, $is_post){
+	$query_ret = null;
+
+	$ret = craw_cache($cache_key, function() use ($url, $data, $curl_option, $is_post, &$query_ret){
 		Logger::debug('[Req]', $url, $data);
 		Logger::debug('[Curl OPT]', $curl_option);
-		$ret = $is_post ? curl_post($url, $data, $curl_option) : curl_get($url, $data, $curl_option);
-		return $ret ?: null;
+		$query_ret = $is_post ? curl_post($url, $data, $curl_option) : curl_get($url, $data, $curl_option);
+
+		//don't cache on error happens
+		return curl_query_success($query_ret) ? $query_ret : null;
 	});
 	if($cache_hit){
 		Logger::debug('Cache Hit: '.$url.' <<< '.$cache_file.' ('.format_size(filesize($cache_file)).')');
 	}else{
 		Logger::debug('[Cache Set]', $url, $cache_file);
 	}
-	return $ret;
+
+	//while error happens, return error result.
+	return $ret ?: $query_ret;
 }
 
 /**
- * curl_concurrent cache
+ * curl_concurrent cache.
  * cache data use url as cache key
  * @param callable|array $curl_option_fetcher: array Returns the CURL option mapping array. Even if there is only one url, [CURLOPT_URL=>$url] needs to be returned.
  * @param callable|null $on_item_start ($curl_option) Start executing the callback. If false is returned, the task is ignored.
