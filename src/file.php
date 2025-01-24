@@ -108,7 +108,7 @@ function list_file_append_row($list_file, $row){
 /**
  * append json list to list file
  * @param string $list_file
- * @param array[] $rows
+ * @param array $rows
  * @return false|void
  * @throws \Exception
  */
