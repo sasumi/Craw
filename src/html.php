@@ -8,22 +8,19 @@ use tidy;
 use function LFPhp\Func\html_abstract;
 
 /**
+ * query all nodes via css selector
  * @param string $html Note that the html submitted here will have additional utf8 recognition html fragments appended. Please submit utf8 encoded html string
  * @param string $selector
  * @return \DOMElement[]
  */
 function html_find_all($html, $selector){
-	static $xpath_cache = [];
 	if(!$html){
 		return [];
 	}
-	if(!isset($xpath_cache[$html])){
-		$dom = new DOMDocument();
-		$contentType = '<meta http-equiv="Content-Type" content="text/html; charset=utf-8">';
-		@$dom->loadHTML($contentType.$html);
-		$xpath_cache[$html] = new \DOMXPath($dom);
-	}
-	$xpath = $xpath_cache[$html];
+	$dom = new DOMDocument();
+	$contentType = '<meta http-equiv="Content-Type" content="text/html; charset=utf-8">';
+	@$dom->loadHTML($contentType.$html);
+	$xpath = new \DOMXPath($dom);
 	$elements = $xpath->evaluate(selector_to_xpath($selector));
 	$returns = [];
 	for($i = 0, $length = $elements->length; $i < $length; ++$i){
